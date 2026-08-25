@@ -9,6 +9,10 @@
     "url": "https://github.com/kzhu37/Retza-Portfolio.git"
   },
   "homepage": "https://github.com/kzhu37/Retza-Portfolio#readme",
+  "engines": {
+    "node": ">=22.12.0",
+    "npm": ">=10"
+  },
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build",
