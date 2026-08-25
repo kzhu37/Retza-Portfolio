@@ -259,7 +259,7 @@ These are accessibility-oriented design decisions, not a claim of formal WCAG ce
 
 ## How Retza evolved
 
-The current portfolio version goes beyond the original school presentation.
+The current portfolio version goes well beyond the original prototype.
 
 | Earlier project stage | Current portfolio version |
 | --- | --- |
