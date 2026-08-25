@@ -66,7 +66,7 @@ Testing with older and younger family members revealed the most important failur
   <img src="docs/assets/iteration-cycle.svg" alt="Retza iteration cycle showing how user testing led from simpler text to verified visual guidance" width="100%">
 </p>
 
-The original presentation described this process as **iterative empathy**: watch what users actually do, find the assumptions hidden inside the interface, and change the system around the failure rather than blaming the user.
+We described this process as **iterative empathy**: watch what users actually do, find the assumptions hidden inside the interface, and change the system around the failure rather than blaming the user.
 
 ## From question to guided action
 
@@ -277,7 +277,7 @@ Continued development matters because the strongest technical ideas grew directl
 
 Retza was built as a four-person project by **Michael Tetelbaum, Vladimir Dukkardt, Algasem Zabarah, and Kevin Zhu**.
 
-The project was collaborative across user research, accessibility problem framing, interface design, testing, AI behavior, implementation, iteration, and presentation. The public portfolio repository was later created by migrating and extending the project, so its current Git history is not presented as a module-by-module record of the original team's authorship.
+The project was collaborative across user research, accessibility problem framing, interface design, testing, AI behavior, implementation, iteration, and project communication. The public portfolio repository was later created by migrating and extending the project, so its current Git history is not presented as a module-by-module record of the original team's authorship.
 
 This README therefore focuses on the finished team-built system, the decisions behind it, and the way user testing changed the product.
 
