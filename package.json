@@ -1,9 +1,14 @@
 {
   "name": "retza",
   "version": "1.0.0",
-  "description": "Retza desktop app",
+  "description": "Context-aware desktop accessibility assistant with step-by-step guidance and verified Windows UI targeting",
   "main": "./out/main/index.js",
-  "author": "Retza",
+  "author": "Retza Team",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kzhu37/Retza-Portfolio.git"
+  },
+  "homepage": "https://github.com/kzhu37/Retza-Portfolio#readme",
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build",
@@ -11,7 +16,8 @@
     "package": "electron-vite build && electron-builder",
     "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "verify": "npm run typecheck && npm test && npm run build"
   },
   "dependencies": {
     "@electron-toolkit/utils": "^3.0.0",
