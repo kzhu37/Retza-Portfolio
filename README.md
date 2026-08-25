@@ -4,8 +4,6 @@
 
 A Windows-first desktop accessibility assistant that turns computer questions into plain-language walkthroughs and verified on-screen guidance.
 
-[![Verify](https://github.com/kzhu37/Retza-Portfolio/actions/workflows/verify.yml/badge.svg)](https://github.com/kzhu37/Retza-Portfolio/actions/workflows/verify.yml)
-
 `Electron` · `TypeScript` · `React` · `Gemini` · `Windows UI Automation` · `Vitest`
 
 <p align="center">
@@ -244,8 +242,6 @@ npm run typecheck
 npm test
 npm run build
 ```
-
-The badge at the top of this README reflects the current workflow result.
 
 ## Accessibility-oriented interface decisions
 
