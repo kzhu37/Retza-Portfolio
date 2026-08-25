@@ -1,0 +1,43 @@
+name: Scrub portfolio framing
+
+on:
+  push:
+    paths:
+      - .github/workflows/scrub-portfolio-framing.yml
+
+permissions:
+  contents: write
+
+jobs:
+  scrub:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Update portfolio wording
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path("README.md")
+          text = path.read_text(encoding="utf-8")
+          replacements = [
+              (
+                  "The current portfolio version goes beyond the original school presentation.",
+                  "The current portfolio version goes well beyond the original prototype.",
+              ),
+          ]
+          for old, new in replacements:
+              if old not in text:
+                  raise SystemExit(f"Expected text not found: {old}")
+              text = text.replace(old, new)
+          path.write_text(text, encoding="utf-8")
+      - name: Commit wording update
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Remove school framing from portfolio" || exit 0
+          git push
