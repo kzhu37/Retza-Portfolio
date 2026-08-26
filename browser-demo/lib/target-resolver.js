@@ -139,7 +139,7 @@ export function createHighlightController(root, ring, onLost = () => {}) {
 
   const clear = () => {
     window.removeEventListener('resize', schedule)
-    root.removeEventListener('scroll', schedule)
+    root.removeEventListener('scroll', schedule, true)
     activeTarget = null
     activeElement = null
     ring.hidden = true
@@ -188,8 +188,10 @@ export function createHighlightController(root, ring, onLost = () => {}) {
       resizeObserver.observe(activeElement)
     }
     window.addEventListener('resize', schedule, { passive: true })
-    root.addEventListener('scroll', schedule, { passive: true })
-    return { ok: true, evidence: resolved.evidence }
+    // Element scroll events do not bubble. Capture them at the sandbox root so
+    // nested panes such as .demo-content and .settings-sidebar keep the ring aligned.
+    root.addEventListener('scroll', schedule, { passive: true, capture: true })
+    return { ok: true, evidence: resolved.evidence, element: resolved.element }
   }
 
   const destroy = () => clear()
