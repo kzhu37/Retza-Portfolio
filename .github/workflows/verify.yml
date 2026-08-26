@@ -21,14 +21,20 @@ jobs:
           node-version: 24
           cache: npm
 
-      - name: Install dependencies
+      - name: Install desktop dependencies
         run: npm ci
 
-      - name: Type check
+      - name: Type check desktop application
         run: npm run typecheck
 
-      - name: Run tests
+      - name: Run desktop tests
         run: npm test
 
-      - name: Build application
+      - name: Build desktop application
         run: npm run build
+
+      - name: Test browser Show Me resolver
+        run: npm --prefix browser-demo test
+
+      - name: Build browser demo
+        run: npm --prefix browser-demo run build
