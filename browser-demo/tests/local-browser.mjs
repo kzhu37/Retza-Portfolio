@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import http from 'node:http'
 import { readFile } from 'node:fs/promises'
-import { extname, join, normalize } from 'node:path'
+import { extname, normalize } from 'node:path'
 import { chromium } from 'playwright'
 
 const root = new URL('../dist/', import.meta.url)
@@ -98,16 +98,28 @@ try {
     spacer.style.height = '420px'
     target?.parentElement?.insertBefore(spacer, target)
   })
-  await page.waitForTimeout(50)
-  const before = await page.locator('#highlight-ring').boundingBox()
-  const targetBefore = await page.locator('[data-retza-id="nav-bluetooth"]').boundingBox()
-  assert.ok(before && targetBefore)
+  const ringGeometry = () => page.evaluate(() => {
+    const ring = document.querySelector('#highlight-ring')
+    const target = document.querySelector('[data-retza-id="nav-bluetooth"]')
+    const sandbox = document.querySelector('#sandbox')
+    if (!ring || !target || !sandbox) return null
+    const targetRect = target.getBoundingClientRect()
+    const sandboxRect = sandbox.getBoundingClientRect()
+    return {
+      positionedTop: Number.parseFloat(ring.style.top),
+      expectedTop: targetRect.top - sandboxRect.top + sandbox.scrollTop - 6,
+    }
+  })
+  await page.waitForTimeout(100)
+  const before = await ringGeometry()
+  assert.ok(before)
+  assert.ok(Math.abs(before.positionedTop - before.expectedTop) < 1, 'Show Me ring must start aligned with the semantic target')
   await sidebar.evaluate(node => { node.scrollTop = 300 })
-  await page.waitForTimeout(80)
-  const after = await page.locator('#highlight-ring').boundingBox()
-  const targetAfter = await page.locator('[data-retza-id="nav-bluetooth"]').boundingBox()
-  assert.ok(after && targetAfter)
-  assert.ok(Math.abs((after.y - targetAfter.y) - (before.y - targetBefore.y)) < 3, 'Show Me ring must track nested pane scrolling')
+  await page.waitForTimeout(100)
+  const after = await ringGeometry()
+  assert.ok(after)
+  assert.ok(Math.abs(after.positionedTop - after.expectedTop) < 1, 'Show Me ring must track nested pane scrolling')
+  assert.notEqual(after.positionedTop, before.positionedTop, 'Nested scrolling must recompute the Show Me ring position')
 
   // Regression: a stale request must not clear or overwrite a newer request's
   // controller/state when two free-form submissions overlap.
