@@ -41,3 +41,27 @@ jobs:
 
       - name: Build browser demo
         run: npm --prefix browser-demo run build
+
+  production-smoke:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install Playwright
+        run: npm install --prefix browser-demo --no-save playwright@1.55.0
+
+      - name: Install Chromium
+        run: npm --prefix browser-demo exec -- playwright install chromium
+
+      - name: Verify Vercel production experience
+        env:
+          RETZA_DEMO_URL: https://retza-portfolio-demo-xiangseanzhu-7370.vercel.app
+        run: node browser-demo/tests/production-smoke.mjs
