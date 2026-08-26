@@ -69,5 +69,5 @@ jobs:
 
       - name: Verify Vercel production experience
         env:
-          RETZA_DEMO_URL: https://retza-portfolio-demo-6ymq7vvqo-xiangseanzhu-7370.vercel.app
+          RETZA_DEMO_URL: https://retza-admissions-demo-7k8dn20y6-xiangseanzhu-7370.vercel.app
         run: node browser-demo/tests/production-smoke.mjs
