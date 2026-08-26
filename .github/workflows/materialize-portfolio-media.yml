@@ -1,0 +1,161 @@
+name: Materialize portfolio media
+
+on:
+  push:
+    branches:
+      - retza-portfolio-media
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build final portfolio assets and presentation
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p docs/assets
+
+          cat .media-staging/showme-*.b64 | tr -d '\n\r' | base64 --decode > docs/assets/retza-show-me.gif
+          cat .media-staging/walk-*.b64 | tr -d '\n\r' | base64 --decode > docs/assets/retza-walkthrough.webp
+
+          test "$(head -c 6 docs/assets/retza-show-me.gif)" = "GIF89a" -o "$(head -c 6 docs/assets/retza-show-me.gif)" = "GIF87a"
+          test "$(head -c 4 docs/assets/retza-walkthrough.webp)" = "RIFF"
+          test "$(dd if=docs/assets/retza-walkthrough.webp bs=1 skip=8 count=4 2>/dev/null)" = "WEBP"
+          test -s docs/assets/retza-show-me.gif
+          test -s docs/assets/retza-walkthrough.webp
+
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('README.md')
+          s = p.read_text(encoding='utf-8')
+
+          old_nav = '''<p align="center">
+            <a href="#why-retza-exists">Why</a> ·
+            <a href="#how-show-me-works">Show Me</a> ·
+            <a href="#architecture-and-trust-boundaries">Architecture</a> ·
+            <a href="#testing-changed-the-product">Iteration</a> ·
+            <a href="#testing-and-verification">Verification</a> ·
+            <a href="#run-locally">Run locally</a>
+          </p>'''
+          new_nav = '''<p align="center">
+            <a href="#show-me-in-action">Demo</a> ·
+            <a href="#my-contribution">My contribution</a> ·
+            <a href="#why-retza-exists">Problem</a> ·
+            <a href="#how-show-me-works">Engineering</a> ·
+            <a href="#testing-changed-the-product">Iteration</a> ·
+            <a href="#testing-and-verification">Verification</a> ·
+            <a href="#run-locally">Run locally</a>
+          </p>'''
+          if old_nav not in s:
+              raise SystemExit('README navigation block not found')
+          s = s.replace(old_nav, new_nav, 1)
+
+          old_hero = '''<p align="center">
+            <img src="docs/assets/retza-product-flow.svg" alt="Retza product flow from asking a computer question to a walkthrough and verified Show Me highlight" width="100%">
+          </p>'''
+          new_hero = '''<p align="center">
+            <img src="docs/assets/retza-walkthrough.webp" alt="Retza desktop application showing a YouTube Studio walkthrough with simple numbered steps and a Start Walkthrough action" width="100%">
+          </p>'''
+          if old_hero not in s:
+              raise SystemExit('README hero block not found')
+          s = s.replace(old_hero, new_hero, 1)
+
+          s = s.replace(
+              'A Windows-first desktop accessibility assistant that turns computer questions into plain-language walkthroughs and verified on-screen guidance.',
+              'A Windows-first desktop accessibility assistant that turns computer questions into plain-language walkthroughs, proactive support, and verified on-screen guidance.',
+              1,
+          )
+
+          s = s.replace(
+              'Retza began with a simple question: **what if computer help was designed for people who do not already understand computers?** The first prototype focused on making AI instructions shorter and easier to read. User testing exposed a deeper problem. A person could understand the instruction and still be unable to find the button it described.',
+              'Retza began with a simple question: **what if computer help was designed for people who do not already understand computers?** Early versions focused on shorter AI instructions and a deliberately simple interface. User testing exposed a deeper problem. A person could understand an instruction and still be unable to find the button or icon it described.',
+              1,
+          )
+
+          old_table_tail = '| **User-centered iteration** | Testing showed that understandable instructions still fail when users cannot locate the control, which drove the visual-guidance direction |\n| **Verification** | Windows CI runs type checking, 103 automated Vitest tests across six test files, and a production build |'
+          new_table_tail = '| **User-centered iteration** | Testing showed that understandable instructions still fail when users cannot locate the relevant control |\n| **My contribution** | Target-user research, problem framing, use-case selection, direct user testing, feedback interpretation, product direction, and project communication |\n| **Team** | Four people: Michael Tetelbaum, Vladimir Dukkardt, Algasem Zabarah, and Kevin Zhu |\n| **Verification** | Windows CI runs type checking, 103 automated Vitest tests across six test files, and a production build |'
+          if old_table_tail not in s:
+              raise SystemExit('README table insertion point not found')
+          s = s.replace(old_table_tail, new_table_tail, 1)
+
+          show_me = '''\n## Show Me in action\n\n<p align="center">\n  <img src="docs/assets/retza-show-me.gif" alt="Animated Retza demo showing the Show Me feature locating and visually highlighting the next interface control" width="520">\n</p>\n\nThe animation above captures the feature that most clearly represents the project's evolution. Retza does not merely tell the user what to click. A walkthrough step can expose **Show Me**, which resolves the intended control through Windows UI Automation, validates the match, converts its screen geometry, and presents a visual guide only when the evidence is strong enough.\n\nThis matters because the most important usability failure we observed was not misunderstanding the words. It was understanding the words and still not knowing where to act.\n\n'''
+          marker = '\n## What Retza does\n'
+          if marker not in s:
+              raise SystemExit('README What Retza does heading not found')
+          s = s.replace(marker, show_me + marker, 1)
+
+          product_flow = '''\n<p align="center">\n  <img src="docs/assets/retza-product-flow.svg" alt="Retza product flow from asking a computer question to a walkthrough and verified Show Me highlight" width="100%">\n</p>\n'''
+          marker = '\n## Why Retza exists\n'
+          contribution = '''\n## My contribution\n\nRetza is a collaborative four-person project, so I do not present the migrated repository history as proof that I personally authored every technical subsystem. My strongest verified contribution was at the intersection of **user research, product thinking, testing, and iteration**.\n\nI focused on understanding the target audience and the kinds of computer tasks that older or less experienced users commonly struggle with. That research shaped the example questions, use cases, and testing scenarios we built around. I also tested Retza directly with my grandmother and watched how she interacted with the instructions rather than relying only on whether she said they were clear.\n\nThat testing exposed the project's most important insight: **a user can understand an instruction and still be unable to locate the control it refers to.** That gap helped drive the visual-guidance direction that became Show Me. I also contributed to interpreting feedback, refining the product's accessibility framing, and communicating why the problem mattered.\n\nThe current system shown in this repository is team-built. Michael Tetelbaum and Algasem Zabarah focused more heavily on AI logic and response generation, Vladimir Dukkardt led much of the interface design and product look and feel, and my work centered on target-user understanding, use cases, testing, and product framing. Prompt refinement and broader iteration were collaborative.\n\n'''
+          if marker not in s:
+              raise SystemExit('README Why Retza exists heading not found')
+          s = s.replace(marker, product_flow + contribution + marker, 1)
+
+          s = s.replace(
+              'Our original goal was "zero barrier accessibility." We repeatedly refined the assistant because simply telling an AI to "be simple" still produced jargon, skipped steps, or instructions that made sense only to experienced users. The harder design question became: **what background knowledge is this instruction assuming?**',
+              'Our original goal was "zero barrier accessibility." Early prompting experiments showed that simply asking an AI to "be simple" was not enough. Responses could still use jargon such as "settings menu" or "drag and drop," combine multiple actions into one step, or remove so much detail that the instructions stopped being useful. The challenge therefore became more precise: **what background knowledge is this instruction assuming, and how can the product remove that assumption without making the task less accurate?**',
+              1,
+          )
+          s = s.replace(
+              'Testing with older and younger family members revealed the most important failure mode. People could follow the words but still search the screen for the control. That led to the visual-guidance concept and eventually to the current verified **Show Me** pipeline.',
+              'Testing included my grandmother and younger users in a teammate\'s family. We paid attention to hesitation, repeated searching, and places where the person could repeat the instruction correctly but still could not act on it. That observation led to the visual-guidance concept and eventually to the current verified **Show Me** pipeline.',
+              1,
+          )
+          s = s.replace(
+              'We described this process as **iterative empathy**: watch what users actually do, find the assumptions hidden inside the interface, and change the system around the failure rather than blaming the user.',
+              'We described this process as **iterative empathy**: watch what users actually do, find the assumptions hidden inside the interface, and change the system around the failure.',
+              1,
+          )
+          s = s.replace(
+              '**simpler text -> step-by-step walkthroughs -> visual guidance -> evidence-backed UI targeting**',
+              '**simpler text -> one-step walkthroughs -> visual guidance -> evidence-backed UI targeting**',
+              1,
+          )
+          s = s.replace(
+              'It also changed how we thought about debugging. Some of the hardest failures were not cases where the software crashed. They were cases where the software behaved as intended but the user still could not confidently complete the task.',
+              'The important lesson was that a software failure does not always look like a crash. Retza could behave exactly as programmed and still fail the user if the person could not confidently complete the next action.',
+              1,
+          )
+          s = s.replace(
+              'This README therefore focuses on the finished team-built system, the decisions behind it, and the way user testing changed the product.',
+              'For individual contribution, see [My contribution](#my-contribution). That section intentionally separates my verified work from the broader team-built technical system.',
+              1,
+          )
+
+          if '—' in s or '–' in s:
+              raise SystemExit('README still contains a long dash')
+          p.write_text(s, encoding='utf-8')
+
+          ui = Path('src/renderer/src/components/MainWindow.tsx')
+          t = ui.read_text(encoding='utf-8')
+          replacements = {
+              "Here's the plan — {totalSteps} step{totalSteps !== 1 ? 's' : ''}:": "Here's the plan: {totalSteps} step{totalSteps !== 1 ? 's' : ''}:",
+              "Hello! I'm Fox, your friendly computer helper. I'm here whenever you need a hand — just type your question below!": "Hello! I'm Fox, your friendly computer helper. I'm here whenever you need a hand. Just type your question below!",
+              "Looks like you might be stuck — need some help? Just type or ask me anything!": "Looks like you might be stuck. Need some help? Just type or ask me anything!",
+              "I can't connect yet — please add your Gemini API key in Settings (the gear button).": "I can't connect yet. Please add your Gemini API key in Settings (the gear button).",
+              "Something interrupted that request. You're not stuck — please try it again.": "Something interrupted that request. You're not stuck, please try it again.",
+              "Watching for help opportunities — click to pause": "Watching for help opportunities, click to pause",
+              "Paused — click to resume watching": "Paused, click to resume watching",
+          }
+          for a, b in replacements.items():
+              t = t.replace(a, b)
+          ui.write_text(t, encoding='utf-8')
+          PY
+
+          rm -rf .media-staging
+          rm -f .github/workflows/materialize-portfolio-media.yml
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md docs/assets/retza-show-me.gif docs/assets/retza-walkthrough.webp src/renderer/src/components/MainWindow.tsx .media-staging .github/workflows/materialize-portfolio-media.yml
+          git commit -m "Finish admissions-ready Retza portfolio presentation"
+          git push origin HEAD:retza-portfolio-media
