@@ -1,5 +1,6 @@
 name: Branch Production Acceptance
 
+# Temporary isolated release gate; removed after the live production run passes.
 on:
   push:
 
