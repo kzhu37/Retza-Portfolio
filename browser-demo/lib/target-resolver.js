@@ -100,7 +100,9 @@ function isActuallyVisible(element, root) {
   const style = element.ownerDocument?.defaultView?.getComputedStyle?.(element)
   if (style && (style.display === 'none' || style.visibility === 'hidden' || Number(style.opacity) === 0)) return false
   const rect = element.getBoundingClientRect()
-  return rect.width > 0 && rect.height > 0
+  const rootRect = root.getBoundingClientRect()
+  if (rect.width <= 0 || rect.height <= 0) return false
+  return rect.bottom > rootRect.top && rect.top < rootRect.bottom && rect.right > rootRect.left && rect.left < rootRect.right
 }
 
 export function resolveTarget(root, target) {
@@ -127,7 +129,17 @@ export function createHighlightController(root, ring, onLost = () => {}) {
   let resizeObserver = null
   let frame = 0
 
+  const schedule = () => {
+    if (frame) cancelAnimationFrame(frame)
+    frame = requestAnimationFrame(() => {
+      frame = 0
+      position()
+    })
+  }
+
   const clear = () => {
+    window.removeEventListener('resize', schedule)
+    root.removeEventListener('scroll', schedule)
     activeTarget = null
     activeElement = null
     ring.hidden = true
@@ -160,14 +172,6 @@ export function createHighlightController(root, ring, onLost = () => {}) {
     ring.style.height = `${rect.height + 12}px`
   }
 
-  const schedule = () => {
-    if (frame) cancelAnimationFrame(frame)
-    frame = requestAnimationFrame(() => {
-      frame = 0
-      position()
-    })
-  }
-
   const show = target => {
     clear()
     const resolved = resolveTarget(root, target)
@@ -188,11 +192,7 @@ export function createHighlightController(root, ring, onLost = () => {}) {
     return { ok: true, evidence: resolved.evidence }
   }
 
-  const destroy = () => {
-    window.removeEventListener('resize', schedule)
-    root.removeEventListener('scroll', schedule)
-    clear()
-  }
+  const destroy = () => clear()
 
   return { show, clear, destroy, reposition: schedule }
 }
