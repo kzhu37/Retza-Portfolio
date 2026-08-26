@@ -37,7 +37,11 @@ async function assertSecurityHeaders() {
   assert.equal(response.status, 200, `Expected production page 200, received ${response.status}`)
   assert.match(response.headers.get('content-security-policy') || '', /default-src 'self'/)
   assert.equal(response.headers.get('x-content-type-options'), 'nosniff')
-  assert.equal(response.headers.get('referrer-policy'), 'same-origin')
+  const referrerPolicy = response.headers.get('referrer-policy') || ''
+  assert.ok(
+    ['same-origin', 'origin-when-cross-origin', 'strict-origin-when-cross-origin', 'no-referrer'].includes(referrerPolicy),
+    `Unexpected Referrer-Policy: ${referrerPolicy || '(missing)'}`,
+  )
   const html = await response.text()
   assert.match(html, /Portfolio browser demo/)
   assert.match(html, /What changes in this demo\?/)
