@@ -105,12 +105,26 @@ function renderExamples() {
   EXAMPLE_IDS.forEach(id => { const scenario = SCENARIOS[id]; const button = document.createElement('button'); button.type='button'; button.className='example-button'; button.textContent=scenario.label; button.addEventListener('click', () => submitQuestion(scenario.label)); elements.examples.appendChild(button) })
 }
 
-function beginScenario(scenario) {
-  state.scenario = scenario; state.steps = numberedSteps(scenario); state.stepIndex = 0; addMessage('fox', scenario.intro); elements.walkthrough.hidden = false; renderStep(); elements.walkthrough.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+function beginWalkthrough(message, steps, scenario = null) {
+  state.scenario = scenario
+  state.steps = steps.map((step, index) => ({ ...step, stepNumber: index + 1 }))
+  state.stepIndex = 0
+  addMessage('fox', message)
+  elements.walkthrough.hidden = false
+  renderStep()
+  elements.walkthrough.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
 }
+
+function beginScenario(scenario) {
+  beginWalkthrough(scenario.intro, numberedSteps(scenario), scenario)
+}
+
 function renderStep() {
   const step = state.steps[state.stepIndex]; if (!step) return
-  highlight.clear(); elements.showStatus.textContent = ''; setPage(step.page); elements.progress.textContent = `Step ${state.stepIndex + 1} of ${state.steps.length}`; elements.instruction.textContent = step.instruction; elements.back.disabled = state.stepIndex === 0; elements.next.textContent = state.stepIndex === state.steps.length - 1 ? 'Finish' : 'Next'; elements.showMe.disabled = !step.target || step.target.zone === 'none'
+  highlight.clear(); elements.showStatus.textContent = ''
+  if (step.page) setPage(step.page)
+  else highlight.reposition()
+  elements.progress.textContent = `Step ${state.stepIndex + 1} of ${state.steps.length}`; elements.instruction.textContent = step.instruction; elements.back.disabled = state.stepIndex === 0; elements.next.textContent = state.stepIndex === state.steps.length - 1 ? 'Finish' : 'Next'; elements.showMe.disabled = !step.target || step.target.zone === 'none'
 }
 function endWalkthrough(completed = false) { highlight.clear(); elements.walkthrough.hidden = true; if (completed) addMessage('fox','You finished the walkthrough. The browser demo used only controls inside the sandbox.'); state.scenario=null; state.steps=[]; state.stepIndex=0 }
 
@@ -123,17 +137,32 @@ elements.showMe.addEventListener('click', () => {
   requestAnimationFrame(() => {
     const result = highlight.show(step.target); elements.showMe.setAttribute('aria-busy','false')
     elements.showStatus.textContent = result.ok ? 'Verified from sandbox semantics and live DOM bounds.' : result.message
-    if (result.ok) { const resolved = elements.sandbox.querySelector(`[data-retza-id="${CSS.escape(step.target.semanticId || '')}"]`); resolved?.focus({ preventScroll:false }) }
+    if (result.ok) result.element?.focus({ preventScroll:false })
   })
 })
 
 function demoContext() { return { page: labelForPage(state.page), bluetooth: state.bluetooth, wifi: state.wifi, selectedNetwork: state.selectedNetwork, visibleWindow: elements.windowTitle.textContent } }
 
+function cancelAIRequest() {
+  const controller = state.aiController
+  if (!controller) return
+  state.aiController = null
+  controller.abort()
+  hideTyping()
+  elements.send.disabled = false
+}
+
 async function askAI(question) {
-  state.aiController?.abort(); state.aiController = new AbortController(); const timeout = setTimeout(() => state.aiController.abort(), 10500)
+  const previous = state.aiController
+  const controller = new AbortController()
+  state.aiController = controller
+  previous?.abort()
+  const timeout = setTimeout(() => controller.abort(), 10500)
+
   try {
-    const response = await fetch('/api/chat', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ question, history: state.history.slice(-6), demoContext: demoContext() }), signal: state.aiController.signal })
+    const response = await fetch('/api/chat', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ question, history: state.history.slice(-6), demoContext: demoContext() }), signal: controller.signal })
     const payload = await response.json().catch(() => ({}))
+    if (state.aiController !== controller) return
     if (!response.ok) {
       if (response.status === 429) throw new Error('Retza’s AI is receiving too many requests right now. The supported demo walkthroughs still work.')
       if (payload.code === 'ai_unavailable') throw new Error('Broader AI questions are temporarily unavailable. Try one of the supported walkthroughs above.')
@@ -141,19 +170,28 @@ async function askAI(question) {
       throw new Error(payload.error || 'Retza could not complete that AI request. The deterministic demo scenarios are still available.')
     }
     if (payload.kind === 'walkthrough' && Array.isArray(payload.steps) && payload.steps.length) {
-      addMessage('fox', payload.message || 'Here is a walkthrough.'); return
+      beginWalkthrough(payload.message || 'Here is a walkthrough.', payload.steps, { id: 'ai' })
+      return
     }
     addMessage('fox', payload.message || 'I could not form a safe response for that question.')
   } catch (error) {
+    if (state.aiController !== controller) return
     if (error.name === 'AbortError') addMessage('fox','The AI request timed out. Supported demo walkthroughs still work without the provider.',{error:true})
     else addMessage('fox', error.message || 'The AI request failed safely.', { error:true })
-  } finally { clearTimeout(timeout); hideTyping(); state.aiController = null; elements.send.disabled = false }
+  } finally {
+    clearTimeout(timeout)
+    if (state.aiController === controller) {
+      hideTyping()
+      state.aiController = null
+      elements.send.disabled = false
+    }
+  }
 }
 
 async function submitQuestion(raw) {
   const question = String(raw ?? '').trim(); if (!question) return; elements.input.value=''; addMessage('user',question)
   const scenario = matchScenario(question)
-  if (scenario) { beginScenario(scenario); return }
+  if (scenario) { cancelAIRequest(); beginScenario(scenario); return }
   showTyping(); elements.send.disabled=true; await askAI(question)
 }
 
@@ -183,5 +221,5 @@ elements.sandbox.addEventListener('click', event => {
 elements.watchingToggle.addEventListener('click', () => { state.watching=!state.watching; elements.watchingToggle.setAttribute('aria-pressed',String(state.watching)); elements.watchingToggle.textContent=state.watching?'Watching demo':'Watching paused'; elements.watchingDot.classList.toggle('active',state.watching) })
 elements.proactiveDemo.addEventListener('click', () => addMessage('fox','This is an accelerated portfolio demonstration of proactive help. The desktop application keeps its normal conservative thresholds; this button does not change them.',{proactive:true}))
 
-window.addEventListener('beforeunload', () => highlight.destroy())
+window.addEventListener('beforeunload', () => { cancelAIRequest(); highlight.destroy() })
 renderExamples(); renderDemo(); configureSpeech()
