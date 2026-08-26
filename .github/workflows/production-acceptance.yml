@@ -1,0 +1,41 @@
+name: Production Acceptance
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+jobs:
+  production-acceptance:
+    if: github.event.issue.pull_request && github.event.comment.body == '/verify-production'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out merged main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install Playwright
+        run: npm install --prefix browser-demo --no-save playwright@1.55.0
+
+      - name: Install Chromium
+        run: npm --prefix browser-demo exec -- playwright install chromium
+
+      - name: Build browser demo
+        run: npm --prefix browser-demo run build
+
+      - name: Run reviewed browser regressions
+        run: node browser-demo/tests/local-browser.mjs
+
+      - name: Verify live production
+        env:
+          RETZA_DEMO_URL: https://retza-admissions-demo-xiangseanzhu-7370.vercel.app
+        run: node browser-demo/tests/production-smoke.mjs
