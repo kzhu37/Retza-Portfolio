@@ -1,5 +1,6 @@
 name: Production Acceptance
 
+# Temporary release gate used to verify the public Retza browser demo before cleanup.
 on:
   push:
     branches: [main]
