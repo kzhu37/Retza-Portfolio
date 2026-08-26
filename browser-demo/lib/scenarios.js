@@ -101,7 +101,7 @@ export const SCENARIOS = Object.freeze({
   windows_update: {
     id: 'windows_update',
     label: 'Check for Windows updates',
-    patterns: [/\bwindows update\b/i, /\bcheck for updates?\b/i, /\bupdate windows\b/i],
+    patterns: [/\bwindows updates?\b/i, /\bcheck for (?:windows )?updates?\b/i, /\bupdate windows\b/i],
     intro: 'Here is the deterministic Windows Update path represented in the sandbox.',
     steps: [
       {
@@ -192,6 +192,10 @@ export const EXAMPLE_IDS = ['bluetooth', 'wifi', 'display', 'windows_update']
 export function matchScenario(input) {
   const query = String(input ?? '').normalize('NFKC').trim()
   if (!query || query.length > 2000) return null
+
+  const exactLabelMatches = Object.values(SCENARIOS).filter(scenario => scenario.label.toLowerCase() === query.toLowerCase())
+  if (exactLabelMatches.length === 1) return exactLabelMatches[0]
+
   const matches = Object.values(SCENARIOS).filter(scenario => scenario.patterns.some(pattern => pattern.test(query)))
   return matches.length === 1 ? matches[0] : null
 }
