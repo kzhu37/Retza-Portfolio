@@ -32,12 +32,12 @@ async function assertVerified(page) {
   assert.equal(await page.locator('#highlight-ring').getAttribute('data-active'), 'true')
 }
 
-async function assertSecurityHeaders() {
-  const response = await fetch(base, { redirect: 'follow' })
-  assert.equal(response.status, 200, `Expected production page 200, received ${response.status}`)
-  assert.match(response.headers.get('content-security-policy') || '', /default-src 'self'/)
-  assert.equal(response.headers.get('x-content-type-options'), 'nosniff')
-  const referrerPolicy = response.headers.get('referrer-policy') || ''
+async function assertSecuritySurface(request) {
+  const response = await request.get(base)
+  assert.equal(response.status(), 200, `Expected production page 200, received ${response.status()}`)
+  assert.match(response.headers()['content-security-policy'] || '', /default-src 'self'/)
+  assert.equal(response.headers()['x-content-type-options'], 'nosniff')
+  const referrerPolicy = response.headers()['referrer-policy'] || ''
   assert.ok(
     ['same-origin', 'origin-when-cross-origin', 'strict-origin-when-cross-origin', 'no-referrer'].includes(referrerPolicy),
     `Unexpected Referrer-Policy: ${referrerPolicy || '(missing)'}`,
@@ -46,32 +46,27 @@ async function assertSecurityHeaders() {
   assert.match(html, /Portfolio browser demo/)
   assert.match(html, /What changes in this demo\?/)
 
-  const getApi = await fetch(`${base}/api/chat`)
-  assert.equal(getApi.status, 405, 'GET /api/chat must be rejected')
+  const getApi = await request.get(`${base}/api/chat`)
+  assert.equal(getApi.status(), 405, 'GET /api/chat must be rejected')
 
-  const crossOrigin = await fetch(`${base}/api/chat`, {
-    method: 'POST',
+  const crossOrigin = await request.post(`${base}/api/chat`, {
     headers: { 'content-type': 'application/json', origin: 'https://example.com' },
-    body: JSON.stringify({ question: 'hello' }),
+    data: { question: 'hello' },
   })
-  assert.equal(crossOrigin.status, 403, 'Cross-origin POST must be rejected')
+  assert.equal(crossOrigin.status(), 403, 'Cross-origin POST must be rejected')
 
-  const invalid = await fetch(`${base}/api/chat`, {
-    method: 'POST',
+  const invalid = await request.post(`${base}/api/chat`, {
     headers: { 'content-type': 'application/json', origin },
-    body: '{}',
+    data: {},
   })
-  assert.equal(invalid.status, 400, 'Malformed bounded request must be rejected')
+  assert.equal(invalid.status(), 400, 'Malformed bounded request must be rejected')
 
-  const oversized = await fetch(`${base}/api/chat`, {
-    method: 'POST',
+  const oversized = await request.post(`${base}/api/chat`, {
     headers: { 'content-type': 'application/json', origin },
-    body: JSON.stringify({ question: 'x'.repeat(13_000) }),
+    data: { question: 'x'.repeat(13_000) },
   })
-  assert.equal(oversized.status, 413, 'Oversized request must be rejected')
+  assert.equal(oversized.status(), 413, 'Oversized request must be rejected')
 }
-
-await assertSecurityHeaders()
 
 const browser = await chromium.launch({ headless: true })
 const browserErrors = []
@@ -85,8 +80,19 @@ try {
   page.on('pageerror', error => browserErrors.push(error.message))
   page.on('requestfailed', request => failedRequests.push(`${request.method()} ${request.url()} :: ${request.failure()?.errorText || 'failed'}`))
 
-  await page.goto(base, { waitUntil: 'networkidle', timeout: 30_000 })
-  assert.equal(await page.getByText('Portfolio browser demo', { exact: true }).isVisible(), true)
+  await page.goto(base, { waitUntil: 'domcontentloaded', timeout: 30_000 })
+  try {
+    await page.getByText('Portfolio browser demo', { exact: true }).waitFor({ state: 'visible', timeout: 15_000 })
+  } catch {
+    const title = await page.title().catch(() => '')
+    const body = ((await page.locator('body').innerText().catch(() => '')) || '').slice(0, 1200)
+    throw new Error(`Production browser did not reach Retza. Title: ${title || '(none)'}. Body: ${body || '(empty)'}`)
+  }
+
+  // Once the browser has completed any platform challenge, use its shared-cookie
+  // request context to verify the actual application HTTP/API surface.
+  await assertSecuritySurface(context.request)
+
   assert.equal(await page.getByRole('heading', { name: 'Retza' }).isVisible(), true)
   assert.equal(await page.getByRole('heading', { name: 'Interactive settings environment' }).isVisible(), true)
 
