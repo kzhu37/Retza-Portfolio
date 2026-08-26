@@ -7,6 +7,11 @@ A Windows-first desktop accessibility assistant that turns computer questions in
 `Electron` · `TypeScript` · `React` · `Gemini` · `Windows UI Automation` · `Vitest`
 
 <p align="center">
+  <strong><a href="https://retza-portfolio-demo-xiangseanzhu-7370.vercel.app/">Try the live browser demo</a></strong>
+</p>
+
+<p align="center">
+  <a href="#live-browser-demo">Browser demo</a> ·
   <a href="#show-me-in-action">Demo</a> ·
   <a href="#my-contribution">My contribution</a> ·
   <a href="#why-retza-exists">Problem</a> ·
@@ -26,6 +31,16 @@ That observation changed the project. Retza evolved from a text-based helper int
 
 > **Core engineering principle:** if Retza cannot confidently prove where a control is, it does not point.
 
+## Live browser demo
+
+The public portfolio includes a working browser adaptation of Retza at **[retza-portfolio-demo-xiangseanzhu-7370.vercel.app](https://retza-portfolio-demo-xiangseanzhu-7370.vercel.app/)**. It preserves the product idea and trust boundary while adapting system-level features honestly to what a browser can actually do.
+
+> **Browser demo note:** The live Retza demo is a sandboxed portfolio version designed to demonstrate Retza's chat, step-by-step walkthrough, proactive-help, and Show Me experience within the demo environment. Unlike the full Windows desktop application, the browser demo cannot inspect other applications, access the live Windows UI Automation tree, monitor system-wide interaction, or display guidance over the user's desktop. Those system-level capabilities are implemented in the desktop application documented below.
+
+Inside the sandbox, deterministic walkthroughs for Bluetooth, Wi-Fi, display settings, sound output, Windows Update, app removal, Windows Search, and Device Manager remain usable even if generative AI is unavailable. The browser version's **Show Me** resolver uses accessible DOM names, roles, semantic IDs, live visibility, and live element bounds inside the simulated computer. It rejects missing, ambiguous, hidden, or disabled targets instead of guessing. It does **not** use or claim to use Windows UI Automation.
+
+Broader chat is routed through a protected Vercel Function in [`api/chat.js`](api/chat.js). The browser never receives the AI credential. Requests and responses are bounded and validated, same-origin requests are enforced, provider calls have a timeout, and deterministic walkthroughs provide a useful degraded path when AI is unavailable.
+
 ## At a glance
 
 | Area | Current implementation |
@@ -33,11 +48,12 @@ That observation changed the project. Retza evolved from a text-based helper int
 | **Problem** | Computer help often assumes vocabulary and interface knowledge that less experienced users do not have |
 | **Product** | A Windows-first accessibility assistant for questions, walkthroughs, proactive help, and visual guidance |
 | **Technical centerpiece** | Fail-closed Show Me targeting through Windows UI Automation rather than AI-generated coordinates |
+| **Browser portfolio path** | Sandboxed Vercel demo with real chat, deterministic walkthroughs, DOM-semantic Show Me targeting, and explicit browser-only scope |
 | **Guidance strategy** | Deterministic Windows navigation for stable tasks, Gemini for broader questions, and prerequisite repair when setup steps are missing |
 | **User-centered iteration** | Testing showed that understandable instructions still fail when users cannot locate the relevant control |
 | **My contribution** | Target-user research, problem framing, use-case selection, direct user testing, feedback interpretation, product direction, and project communication |
 | **Team** | Four people: Michael Tetelbaum, Vladimir Dukkardt, Algasem Zabarah, and Kevin Zhu |
-| **Verification** | Windows CI runs type checking, 103 automated Vitest tests across six test files, and a production build |
+| **Verification** | Windows CI runs type checking, 103 automated Vitest tests across six test files, and a production build; browser CI adds semantic-resolver tests and a live Vercel Playwright smoke check |
 
 ## Show Me in action
 
@@ -198,6 +214,8 @@ The Gemini API key stays in the trusted Electron process. The renderer only rece
 
 A `.env` key is also removed from the inherited process environment after startup so child processes do not automatically receive it.
 
+The browser demo follows the same separation principle through its Vercel Function boundary: AI credentials and provider authentication stay server-side, while the browser receives only validated response data.
+
 ## Proactive help without pretending to read emotions
 
 One challenge from the original project was **interpreting confusion without explicit input**. The current version addresses that conservatively through interaction heuristics rather than claiming to infer a user's emotional state.
@@ -214,6 +232,8 @@ The current detector can react to patterns such as:
 - a **120 second** cooldown after an intervention
 
 Keyboard activity is used as an activity signal, but the detector does not need to record which key was pressed. Users can also pause the Watching feature from the main interface.
+
+The browser demo does not monitor system-wide activity. Its proactive-help demonstration observes only interactions inside the sandbox and is labeled accordingly.
 
 The goal is not to diagnose frustration. It is to create a low-cost opportunity to offer help when interaction patterns suggest that help might be useful.
 
@@ -241,7 +261,7 @@ The important lesson was that a software failure does not always look like a cra
 
 ## Testing and verification
 
-The repository includes automated Vitest coverage for both expected behavior and failure states. The current Windows CI run passes **103 tests across six test files** before completing the production build.
+The repository includes automated coverage for both expected behavior and failure states. The Windows verification still passes **103 Vitest tests across six test files** before completing the Electron production build. The browser adapter adds **8 focused semantic resolver tests** for exact matches and fail-closed missing, ambiguous, hidden, disabled, and unsupported targets.
 
 Coverage includes:
 
@@ -256,19 +276,15 @@ Coverage includes:
 - duplicated taskbar controls across monitors
 - Show Me lifecycle behavior
 - settings validation
+- browser-only semantic target rejection and ambiguity handling
 
-The most relevant test suites are the [geometry tests](src/main/show-me/geometry.test.ts), [UI Automation matcher tests](src/main/show-me/windows-uia.test.ts), [Show Me lifecycle tests](src/main/show-me/lifecycle.test.ts), [assistant-response tests](tests/assistant-response.test.ts), and [Windows navigation tests](tests/windows-navigation.test.ts).
+The most relevant desktop test suites are the [geometry tests](src/main/show-me/geometry.test.ts), [UI Automation matcher tests](src/main/show-me/windows-uia.test.ts), [Show Me lifecycle tests](src/main/show-me/lifecycle.test.ts), [assistant-response tests](tests/assistant-response.test.ts), and [Windows navigation tests](tests/windows-navigation.test.ts). The browser resolver tests are in [`browser-demo/tests/target-resolver.node-test.js`](browser-demo/tests/target-resolver.node-test.js).
 
 An optional live Windows UI Automation smoke test can also be enabled explicitly for the real transport layer.
 
-GitHub Actions runs:
+A separate Playwright production smoke test runs against the public Vercel deployment. It checks the fresh-session experience, deterministic walkthroughs, Show Me success and failure states, live revalidation, ambiguity rejection, accessible text-size controls, proactive-help scope, responsive layout, reduced motion, protected AI requests, security headers, credential non-exposure, same-origin browser requests, failed network requests, and browser console errors.
 
-```bash
-npm ci
-npm run typecheck
-npm test
-npm run build
-```
+GitHub Actions runs the desktop and browser build checks first, then gates completion on the production smoke test.
 
 ## Accessibility-oriented interface decisions
 
@@ -317,9 +333,10 @@ For individual contribution, see [My contribution](#my-contribution). That secti
 | Build tooling | Electron Vite, Vite |
 | Generative assistance | Google Generative AI SDK |
 | Windows UI locating | Windows UI Automation through PowerShell and .NET |
+| Browser portfolio demo | HTML, CSS, JavaScript, Vercel Functions, Vercel AI Gateway |
 | Interaction monitoring | `uiohook-napi` |
 | Styling | Tailwind CSS and custom CSS |
-| Testing | Vitest |
+| Testing | Vitest, Node test runner, Playwright |
 | Packaging configuration | Electron Builder |
 
 ## Run locally
@@ -328,7 +345,7 @@ For individual contribution, see [My contribution](#my-contribution). That secti
 
 - Node.js 22.12 or newer and npm
 - Windows 10 or Windows 11 for full Show Me functionality
-- a Gemini API key for generative questions
+- a Gemini API key for generative questions in the desktop application
 
 ### Install and start
 
@@ -358,13 +375,15 @@ Never commit a real API key.
 npm run verify
 ```
 
-This runs type checking, the automated test suite, and the production build.
+This runs type checking, the automated desktop test suite, and the desktop production build. Browser-specific verification is also enforced in GitHub Actions for the portfolio deployment.
 
 ## Platform scope and current limitations
 
 Retza should currently be treated as a **Windows-first** application.
 
 - Exact Show Me locating is implemented for Windows through Windows UI Automation.
+- The live browser demo is intentionally sandboxed. Its DOM resolver can locate only controls inside the simulated demo computer and is not a substitute for Windows UI Automation.
+- The browser demo cannot inspect other applications, access the live Windows accessibility tree, monitor system-wide interaction, or render guidance over the desktop.
 - Build configuration contains macOS and Linux packaging targets, but feature parity is not complete.
 - Visible-window context is more complete on Windows than on macOS.
 - Speech recognition currently uses English (`en-US`) when the Chromium speech API is available.
