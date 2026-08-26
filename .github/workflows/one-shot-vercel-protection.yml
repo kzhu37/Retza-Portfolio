@@ -1,0 +1,33 @@
+name: One-shot Vercel protection repair
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Disable Vercel Authentication when deployment credentials are available
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          set -euo pipefail
+          if [ -z "${VERCEL_TOKEN}" ] || [ -z "${VERCEL_ORG_ID}" ] || [ -z "${VERCEL_PROJECT_ID}" ]; then
+            echo "Repository Vercel deployment credentials are unavailable."
+            exit 78
+          fi
+          code=$(curl --silent --show-error --output /tmp/vercel-project.json --write-out '%{http_code}' \
+            --request PATCH \
+            "https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}?teamId=${VERCEL_ORG_ID}" \
+            --header "Authorization: Bearer ${VERCEL_TOKEN}" \
+            --header "Content-Type: application/json" \
+            --data '{"ssoProtection":null}')
+          echo "Vercel project update HTTP status: ${code}"
+          test "${code}" = "200"
+          node -e "const fs=require('fs'); const p=JSON.parse(fs.readFileSync('/tmp/vercel-project.json','utf8')); if (p.ssoProtection != null) process.exit(1); console.log('Vercel Authentication is disabled for the project.');"
