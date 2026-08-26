@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* -- Message entrance animations ----------------------------------------------- */
+
+@keyframes slideInLeft {
+  from { transform: translateX(-18px); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(18px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+.msg-fox {
+  animation: slideInLeft 220ms ease-out both;
+}
+
+.msg-user {
+  animation: slideInRight 220ms ease-out both;
+}
+
+/* -- Scrollbar ----------------------------------------------------------------- */
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}

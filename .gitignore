@@ -1,0 +1,7 @@
+.env
+node_modules/
+out/
+dist/
+browser-demo/dist/
+.vercel/
+*.tsbuildinfo

@@ -1,0 +1,74 @@
+name: Verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install desktop dependencies
+        run: npm ci
+
+      - name: Type check desktop application
+        run: npm run typecheck
+
+      - name: Run desktop tests
+        run: npm test
+
+      - name: Build desktop application
+        run: npm run build
+
+      - name: Check browser API syntax
+        run: node --check api/chat.js
+
+      - name: Test browser Show Me resolver
+        run: npm --prefix browser-demo test
+
+      - name: Build browser demo
+        run: npm --prefix browser-demo run build
+
+  production-smoke:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install Playwright
+        run: npm install --prefix browser-demo --no-save playwright@1.62.1
+
+      - name: Install Chromium
+        run: npm --prefix browser-demo exec -- playwright install chromium
+
+      - name: Build browser demo for regression tests
+        run: npm --prefix browser-demo run build
+
+      - name: Run reviewed browser regressions
+        run: node browser-demo/tests/local-browser.mjs
+
+      - name: Verify Vercel production experience
+        env:
+          RETZA_DEMO_URL: https://retza-demo-live-xiangseanzhu-7370.vercel.app
+        run: node browser-demo/tests/production-smoke.mjs
