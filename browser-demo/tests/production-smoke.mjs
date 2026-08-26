@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict'
 import { chromium } from 'playwright'
 
-const base = process.env.RETZA_DEMO_URL || 'https://retza-portfolio-demo-xiangseanzhu-7370.vercel.app'
+const base = process.env.RETZA_DEMO_URL || 'https://retza-admissions-demo-xiangseanzhu-7370.vercel.app'
 const origin = new URL(base).origin
 const timeout = 20_000
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+const isFocused = locator => locator.evaluate(element => element === element.ownerDocument.activeElement)
 
 async function waitForStatus(page, pattern) {
   await page.waitForFunction(
@@ -106,13 +107,13 @@ try {
   await startBluetooth(page)
   await clickShowMe(page)
   await assertVerified(page)
-  assert.equal(await page.locator('[data-retza-id="nav-bluetooth"]').isFocused(), true)
+  assert.equal(await isFocused(page.locator('[data-retza-id="nav-bluetooth"]')), true)
 
   await page.getByRole('button', { name: 'Next' }).click()
   await page.getByText('Step 2 of 2', { exact: true }).waitFor({ timeout })
   await clickShowMe(page)
   await assertVerified(page)
-  assert.equal(await page.locator('[data-retza-id="bluetooth-toggle"]').isFocused(), true)
+  assert.equal(await isFocused(page.locator('[data-retza-id="bluetooth-toggle"]')), true)
   await page.locator('[data-retza-id="bluetooth-toggle"]').click()
   assert.equal(await page.locator('[data-retza-id="bluetooth-toggle"]').getAttribute('aria-pressed'), 'true')
 
@@ -216,7 +217,7 @@ try {
   // Keyboard focus is visible from the first Tab stop.
   await page.reload({ waitUntil: 'networkidle' })
   await page.keyboard.press('Tab')
-  assert.equal(await page.locator('.skip-link').isFocused(), true)
+  assert.equal(await isFocused(page.locator('.skip-link')), true)
   const outlineStyle = await page.locator('.skip-link').evaluate(node => getComputedStyle(node).outlineStyle)
   assert.notEqual(outlineStyle, 'none')
 
