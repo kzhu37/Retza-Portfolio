@@ -2,24 +2,25 @@
 
 **Reaching Everybody Through Zero Barrier Accessibility**
 
-A Windows-first desktop accessibility assistant that turns computer questions into plain-language walkthroughs and verified on-screen guidance.
+A Windows-first desktop accessibility assistant that turns computer questions into plain-language walkthroughs, proactive support, and verified on-screen guidance.
 
 `Electron` · `TypeScript` · `React` · `Gemini` · `Windows UI Automation` · `Vitest`
 
 <p align="center">
-  <a href="#why-retza-exists">Why</a> ·
-  <a href="#how-show-me-works">Show Me</a> ·
-  <a href="#architecture-and-trust-boundaries">Architecture</a> ·
+  <a href="#show-me-in-action">Demo</a> ·
+  <a href="#my-contribution">My contribution</a> ·
+  <a href="#why-retza-exists">Problem</a> ·
+  <a href="#how-show-me-works">Engineering</a> ·
   <a href="#testing-changed-the-product">Iteration</a> ·
   <a href="#testing-and-verification">Verification</a> ·
   <a href="#run-locally">Run locally</a>
 </p>
 
 <p align="center">
-  <img src="docs/assets/retza-product-flow.svg" alt="Retza product flow from asking a computer question to a walkthrough and verified Show Me highlight" width="100%">
+  <img src="docs/assets/retza-walkthrough.webp" alt="Retza desktop application showing a YouTube Studio walkthrough with simple numbered steps and a Start Walkthrough action" width="100%">
 </p>
 
-Retza began with a simple question: **what if computer help was designed for people who do not already understand computers?** The first prototype focused on making AI instructions shorter and easier to read. User testing exposed a deeper problem. A person could understand the instruction and still be unable to find the button it described.
+Retza began with a simple question: **what if computer help was designed for people who do not already understand computers?** Early versions focused on shorter AI instructions and a deliberately simple interface. User testing exposed a deeper problem. A person could understand an instruction and still be unable to find the button or icon it described.
 
 That observation changed the project. Retza evolved from a text-based helper into a desktop companion that combines one-step-at-a-time walkthroughs, limited system context, proactive help heuristics, voice input, and a **Show Me** system that independently verifies real Windows interface elements before pointing to them.
 
@@ -33,8 +34,20 @@ That observation changed the project. Retza evolved from a text-based helper int
 | **Product** | A Windows-first accessibility assistant for questions, walkthroughs, proactive help, and visual guidance |
 | **Technical centerpiece** | Fail-closed Show Me targeting through Windows UI Automation rather than AI-generated coordinates |
 | **Guidance strategy** | Deterministic Windows navigation for stable tasks, Gemini for broader questions, and prerequisite repair when setup steps are missing |
-| **User-centered iteration** | Testing showed that understandable instructions still fail when users cannot locate the control, which drove the visual-guidance direction |
+| **User-centered iteration** | Testing showed that understandable instructions still fail when users cannot locate the relevant control |
+| **My contribution** | Target-user research, problem framing, use-case selection, direct user testing, feedback interpretation, product direction, and project communication |
+| **Team** | Four people: Michael Tetelbaum, Vladimir Dukkardt, Algasem Zabarah, and Kevin Zhu |
 | **Verification** | Windows CI runs type checking, 103 automated Vitest tests across six test files, and a production build |
+
+## Show Me in action
+
+<p align="center">
+  <img src="docs/assets/retza-show-me.gif" alt="Animated Retza demo showing the Show Me feature locating and visually highlighting the next interface control" width="520">
+</p>
+
+The animation above captures the feature that most clearly represents the project's evolution. Retza does not merely tell the user what to click. A walkthrough step can expose **Show Me**, which resolves the intended control through Windows UI Automation, validates the match, converts its screen geometry, and presents a visual guide only when the evidence is strong enough.
+
+This matters because the most important usability failure we observed was not misunderstanding the words. It was understanding the words and still not knowing where to act.
 
 ## What Retza does
 
@@ -47,13 +60,27 @@ That observation changed the project. Retza evolved from a text-based helper int
 - Uses conservative [interaction heuristics](src/main/struggle-detector.ts) to offer help without claiming to know the user's emotional state.
 - Supports speech input, adjustable text sizes, keyboard interaction, and reduced-motion behavior in the visual guide.
 
+<p align="center">
+  <img src="docs/assets/retza-product-flow.svg" alt="Retza product flow from asking a computer question to a walkthrough and verified Show Me highlight" width="100%">
+</p>
+
+## My contribution
+
+Retza is a collaborative four-person project, so I do not present the migrated repository history as proof that I personally authored every technical subsystem. My strongest verified contribution was at the intersection of **user research, product thinking, testing, and iteration**.
+
+I focused on understanding the target audience and the kinds of computer tasks that older or less experienced users commonly struggle with. That research shaped the example questions, use cases, and testing scenarios we built around. I also tested Retza directly with my grandmother and watched how she interacted with the instructions rather than relying only on whether she said they were clear.
+
+That testing exposed the project's most important insight: **a user can understand an instruction and still be unable to locate the control it refers to.** That gap helped drive the visual-guidance direction that became Show Me. I also contributed to interpreting feedback, refining the product's accessibility framing, and communicating why the problem mattered.
+
+The current system shown in this repository is team-built. Michael Tetelbaum and Algasem Zabarah focused more heavily on AI logic and response generation, Vladimir Dukkardt led much of the interface design and product look and feel, and my work centered on target-user understanding, use cases, testing, and product framing. Prompt refinement and broader iteration were collaborative.
+
 ## Why Retza exists
 
 Many interfaces are easy only after someone has learned the vocabulary behind them. Words such as *browser*, *taskbar*, *address bar*, *settings*, or *icon* can silently assume knowledge that not every user has.
 
-Our original goal was "zero barrier accessibility." We repeatedly refined the assistant because simply telling an AI to "be simple" still produced jargon, skipped steps, or instructions that made sense only to experienced users. The harder design question became: **what background knowledge is this instruction assuming?**
+Our original goal was "zero barrier accessibility." Early prompting experiments showed that simply asking an AI to "be simple" was not enough. Responses could still use jargon such as "settings menu" or "drag and drop," combine multiple actions into one step, or remove so much detail that the instructions stopped being useful. The challenge therefore became more precise: **what background knowledge is this instruction assuming, and how can the product remove that assumption without making the task less accurate?**
 
-Testing with older and younger family members revealed the most important failure mode. People could follow the words but still search the screen for the control. That led to the visual-guidance concept and eventually to the current verified **Show Me** pipeline.
+Testing included my grandmother and younger users in a teammate's family. We paid attention to hesitation, repeated searching, and places where the person could repeat the instruction correctly but still could not act on it. That observation led to the visual-guidance concept and eventually to the current verified **Show Me** pipeline.
 
 | What testing exposed | Design response |
 | --- | --- |
@@ -66,7 +93,7 @@ Testing with older and younger family members revealed the most important failur
   <img src="docs/assets/iteration-cycle.svg" alt="Retza iteration cycle showing how user testing led from simpler text to verified visual guidance" width="100%">
 </p>
 
-We described this process as **iterative empathy**: watch what users actually do, find the assumptions hidden inside the interface, and change the system around the failure rather than blaming the user.
+We described this process as **iterative empathy**: watch what users actually do, find the assumptions hidden inside the interface, and change the system around the failure.
 
 ## From question to guided action
 
@@ -208,9 +235,9 @@ Retza was designed around an audience before it was designed around a feature li
 
 That observation changed the design direction:
 
-**simpler text -> step-by-step walkthroughs -> visual guidance -> evidence-backed UI targeting**
+**simpler text -> one-step walkthroughs -> visual guidance -> evidence-backed UI targeting**
 
-It also changed how we thought about debugging. Some of the hardest failures were not cases where the software crashed. They were cases where the software behaved as intended but the user still could not confidently complete the task.
+The important lesson was that a software failure does not always look like a crash. Retza could behave exactly as programmed and still fail the user if the person could not confidently complete the next action.
 
 ## Testing and verification
 
@@ -279,7 +306,7 @@ Retza was built as a four-person project by **Michael Tetelbaum, Vladimir Dukkar
 
 The project was collaborative across user research, accessibility problem framing, interface design, testing, AI behavior, implementation, iteration, and project communication. The public portfolio repository was later created by migrating and extending the project, so its current Git history is not presented as a module-by-module record of the original team's authorship.
 
-This README therefore focuses on the finished team-built system, the decisions behind it, and the way user testing changed the product.
+For individual contribution, see [My contribution](#my-contribution). That section intentionally separates my verified work from the broader team-built technical system.
 
 ## Technology stack
 

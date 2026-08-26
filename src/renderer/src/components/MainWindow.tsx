@@ -316,7 +316,7 @@ function FoxStepMessage({ msg, onSendMessage: _onSendMessage }: { msg: Message; 
               </p>
             )}
             <p style={{ fontSize: fs.badge, color: '#64748b', margin: '0 0 10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em' }}>
-              Here's the plan — {totalSteps} step{totalSteps !== 1 ? 's' : ''}:
+              Here's the plan: {totalSteps} step{totalSteps !== 1 ? 's' : ''}:
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
               {steps.map((s, i) => (
@@ -536,7 +536,7 @@ function MicButton({ state, onToggle, disabled }: {
 
 const WELCOME: Message = {
   id: 1, role: 'fox',
-  text: "Hello! I'm Fox, your friendly computer helper. I'm here whenever you need a hand — just type your question below!",
+  text: "Hello! I'm Fox, your friendly computer helper. I'm here whenever you need a hand. Just type your question below!",
   time: timestamp()
 }
 
@@ -597,7 +597,7 @@ export default function MainWindow(): JSX.Element {
     return window.api.onStruggleDetected(() => {
       setMessages(prev => [...prev, {
         id: makeId(), role: 'fox',
-        text: "Looks like you might be stuck — need some help? Just type or ask me anything!",
+        text: "Looks like you might be stuck. Need some help? Just type or ask me anything!",
         time: timestamp(), isProactive: true
       }])
     })
@@ -658,7 +658,7 @@ export default function MainWindow(): JSX.Element {
       }])
     } else {
       const errorText = result.code === 'api_key_missing'
-        ? "I can't connect yet — please add your Gemini API key in Settings (the gear button)."
+        ? "I can't connect yet. Please add your Gemini API key in Settings (the gear button)."
         : result.code === 'timeout'
           ? 'That request took too long. Please check your connection and try once more.'
           : result.code === 'network'
@@ -675,7 +675,7 @@ export default function MainWindow(): JSX.Element {
     } catch {
       setMessages(prev => [...prev, {
         id: makeId(), role: 'fox', time: timestamp(), isError: true,
-        text: "Something interrupted that request. You're not stuck — please try it again.",
+        text: "Something interrupted that request. You're not stuck, please try it again.",
       }])
     } finally {
       setIsLoading(false)
@@ -758,7 +758,7 @@ export default function MainWindow(): JSX.Element {
                 fontSize: fs.ts, fontWeight: 600,
               }}
               aria-pressed={settings.struggleDetection}
-              aria-label={settings.struggleDetection ? 'Watching for help opportunities — click to pause' : 'Paused — click to resume watching'}
+              aria-label={settings.struggleDetection ? 'Watching for help opportunities, click to pause' : 'Paused, click to resume watching'}
             >
               <WatchingDot active={settings.struggleDetection} />
               <span>{settings.struggleDetection ? 'Watching' : 'Paused'}</span>
