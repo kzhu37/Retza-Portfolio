@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="description" content="Sandboxed browser demonstration of Retza's step-by-step accessibility guidance and verified Show Me targeting." />
+  <title>Retza — Browser Demo</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#assistant-input">Skip to Retza input</a>
+  <div class="scope-banner" role="note">
+    <strong>Portfolio browser demo</strong> — Retza can guide only within this simulated computer. It does not inspect or highlight elements in your real operating system, other applications, or other browser tabs.
+  </div>
+
+  <header class="site-header">
+    <div class="brand-lockup">
+      <span class="fox-mark" aria-hidden="true">🦊</span>
+      <div>
+        <h1>Retza</h1>
+        <p>Reaching Everybody Through Zero Barrier Accessibility</p>
+      </div>
+    </div>
+    <button id="scope-info-button" class="ghost-button" type="button" aria-expanded="false" aria-controls="scope-info">What changes in this demo?</button>
+  </header>
+
+  <section id="scope-info" class="scope-panel" hidden>
+    <div>
+      <h2>Browser demo</h2>
+      <p>Chat runs, deterministic walkthroughs run, Show Me resolves real controls inside this sandbox, and proactive-help signals are limited to interactions here. The site has no operating-system access.</p>
+    </div>
+    <div>
+      <h2>Full Windows application</h2>
+      <p>The desktop app uses Windows UI Automation, live accessibility-tree evidence, DPI/multi-monitor geometry, limited system context, desktop overlays, and system-level interaction monitoring as documented in the repository.</p>
+    </div>
+  </section>
+
+  <main class="workspace">
+    <section class="assistant-pane" aria-labelledby="assistant-title">
+      <div class="pane-heading">
+        <div>
+          <p class="eyebrow">Retza assistant</p>
+          <h2 id="assistant-title">What are you trying to do?</h2>
+        </div>
+        <div class="watching-control" title="Sandbox-only proactive help">
+          <span id="watching-dot" class="watching-dot active" aria-hidden="true"></span>
+          <button id="watching-toggle" type="button" class="text-button" aria-pressed="true">Watching demo</button>
+        </div>
+      </div>
+
+      <div id="examples" class="examples" aria-label="Example questions"></div>
+
+      <div id="chat-log" class="chat-log" role="log" aria-live="polite" aria-relevant="additions text">
+        <article class="message fox-message">
+          <div class="avatar" aria-hidden="true">🦊</div>
+          <div class="bubble">
+            <p>I can guide you through the simulated computer one step at a time. Try Bluetooth first, then use <strong>Show Me</strong> to see how Retza verifies a control before pointing.</p>
+          </div>
+        </article>
+      </div>
+
+      <div id="walkthrough" class="walkthrough" hidden aria-live="polite">
+        <div class="walkthrough-topline">
+          <strong id="walkthrough-progress">Step 1 of 1</strong>
+          <button id="walkthrough-cancel" class="text-button" type="button">End walkthrough</button>
+        </div>
+        <p id="walkthrough-instruction" class="walkthrough-instruction"></p>
+        <div id="show-me-status" class="status-line" role="status"></div>
+        <div class="walkthrough-actions">
+          <button id="walkthrough-back" class="secondary-button" type="button">Back</button>
+          <button id="show-me" class="show-me-button" type="button">⌖ Show Me</button>
+          <button id="walkthrough-next" class="primary-button" type="button">Next</button>
+        </div>
+      </div>
+
+      <form id="assistant-form" class="composer">
+        <label class="sr-only" for="assistant-input">Ask Retza a computer question</label>
+        <textarea id="assistant-input" maxlength="1200" rows="2" placeholder="Ask a computer question…" aria-describedby="composer-help"></textarea>
+        <div class="composer-actions">
+          <p id="composer-help">Supported demo tasks stay available even if AI is offline.</p>
+          <div class="composer-buttons">
+            <button id="voice-button" class="icon-button" type="button" aria-label="Use voice input">🎙</button>
+            <button id="send-button" class="send-button" type="submit">Send</button>
+          </div>
+        </div>
+      </form>
+
+      <details class="settings-card">
+        <summary>Accessibility settings</summary>
+        <fieldset>
+          <legend>Text size</legend>
+          <label><input type="radio" name="text-size" value="normal" checked /> Normal</label>
+          <label><input type="radio" name="text-size" value="large" /> Large</label>
+          <label><input type="radio" name="text-size" value="xlarge" /> Extra large</label>
+        </fieldset>
+        <button id="proactive-demo" class="secondary-button" type="button">Demonstrate proactive help</button>
+      </details>
+    </section>
+
+    <section class="computer-pane" aria-labelledby="computer-title">
+      <div class="pane-heading computer-heading">
+        <div>
+          <p class="eyebrow">Sandboxed demo computer</p>
+          <h2 id="computer-title">Interactive settings environment</h2>
+        </div>
+        <span id="demo-context" class="context-pill">Settings · Home</span>
+      </div>
+
+      <div id="sandbox-shell" class="sandbox-shell">
+        <div id="sandbox" class="sandbox" data-page="home" aria-label="Simulated demo computer">
+          <div class="demo-titlebar">
+            <div class="demo-title"><span class="tiny-logo" aria-hidden="true">R</span><span id="demo-window-title">Settings</span></div>
+            <div class="window-controls" aria-hidden="true"><span>—</span><span>□</span><span>×</span></div>
+          </div>
+          <div class="demo-body">
+            <nav id="settings-sidebar" class="settings-sidebar" aria-label="Settings sections"></nav>
+            <section id="demo-content" class="demo-content" aria-live="polite"></section>
+          </div>
+          <div class="demo-taskbar" aria-label="Demo taskbar">
+            <button data-retza-control data-retza-id="taskbar-start" data-retza-app="Demo Computer" data-retza-window="Taskbar" aria-label="Start" type="button" class="taskbar-button">▦</button>
+            <button id="taskbar-search" data-retza-control data-retza-id="taskbar-search" data-retza-app="Demo Computer" data-retza-window="Taskbar" aria-label="Search" type="button" class="taskbar-search">⌕ <span>Search</span></button>
+            <span class="taskbar-spacer"></span>
+            <span class="taskbar-status" aria-hidden="true">◔  ◉  10:42</span>
+          </div>
+          <div id="highlight-ring" class="highlight-ring" hidden aria-hidden="true"></div>
+        </div>
+      </div>
+      <p class="sandbox-caption">Every Show Me highlight is resolved from accessible names, roles, semantic IDs, and live DOM bounds inside this sandbox only. No coordinates are accepted from AI output.</p>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
