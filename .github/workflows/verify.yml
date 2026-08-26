@@ -43,7 +43,6 @@ jobs:
         run: npm --prefix browser-demo run build
 
   production-smoke:
-    needs: verify
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
