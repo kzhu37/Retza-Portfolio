@@ -25,6 +25,9 @@ jobs:
       - name: Install desktop dependencies
         run: npm ci
 
+      - name: Check portfolio writing
+        run: node scripts/check-portfolio-writing.mjs
+
       - name: Type check desktop application
         run: npm run typecheck
 
@@ -35,7 +38,7 @@ jobs:
         run: npm run build
 
       - name: Check browser API syntax
-        run: node --check api/chat.js
+        run: node --check api/chat.js && node --check api/health.js
 
       - name: Test browser Show Me resolver
         run: npm --prefix browser-demo test
@@ -44,9 +47,10 @@ jobs:
         run: npm --prefix browser-demo run build
 
   production-smoke:
+    if: github.event_name != 'pull_request'
     needs: verify
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 12
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -68,7 +72,13 @@ jobs:
       - name: Run reviewed browser regressions
         run: node browser-demo/tests/local-browser.mjs
 
-      - name: Verify Vercel production experience
+      - name: Wait for matching Vercel production deployment
+        env:
+          RETZA_DEMO_URL: https://retza-live-demo.vercel.app
+          RETZA_EXPECTED_COMMIT: ${{ github.sha }}
+        run: node browser-demo/tests/wait-for-production.mjs
+
+      - name: Verify current Vercel production experience
         env:
           RETZA_DEMO_URL: https://retza-live-demo.vercel.app
         run: node browser-demo/tests/production-smoke.mjs
