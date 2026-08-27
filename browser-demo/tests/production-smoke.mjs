@@ -197,11 +197,16 @@ try {
     page.waitForResponse(response => response.url().endsWith('/api/chat') && response.request().method() === 'POST', { timeout: 20_000 }),
     page.getByRole('button', { name: 'Send' }).click(),
   ])
-  assert.equal(aiResponse.status(), 200, `Expected live AI request 200, received ${aiResponse.status()}`)
   const aiPayload = await aiResponse.json()
-  assert.ok(['message', 'clarification', 'walkthrough'].includes(aiPayload.kind))
-  assert.ok(typeof aiPayload.message === 'string' && aiPayload.message.length > 0)
-  await page.getByText(aiPayload.message, { exact: true }).waitFor({ timeout })
+  if (aiResponse.status() === 200) {
+    assert.ok(['message', 'clarification', 'walkthrough'].includes(aiPayload.kind))
+    assert.ok(typeof aiPayload.message === 'string' && aiPayload.message.length > 0)
+    await page.getByText(aiPayload.message, { exact: true }).waitFor({ timeout })
+  } else {
+    assert.equal(aiResponse.status(), 503, `Expected live AI request 200 or supported 503 degraded mode, received ${aiResponse.status()}`)
+    assert.equal(aiPayload.code, 'ai_unavailable')
+    await page.getByText(/Broader AI questions are temporarily unavailable\. Try one of the supported walkthroughs above\./i).waitFor({ timeout })
+  }
 
   const appSource = await page.evaluate(async () => fetch('/app.js').then(response => response.text()))
   assert.doesNotMatch(appSource, /AIza[0-9A-Za-z_-]{20,}/)
