@@ -77,6 +77,7 @@ async function assertSecuritySurface(request) {
 const browser = await chromium.launch({ headless: true })
 const browserErrors = []
 const failedRequests = []
+let acceptedAiUnavailable = false
 let context
 
 try {
@@ -205,6 +206,7 @@ try {
   } else {
     assert.equal(aiResponse.status(), 503, `Expected live AI request 200 or supported 503 degraded mode, received ${aiResponse.status()}`)
     assert.equal(aiPayload.code, 'ai_unavailable')
+    acceptedAiUnavailable = true
     await page.getByText(/Broader AI questions are temporarily unavailable\. Try one of the supported walkthroughs above\./i).waitFor({ timeout })
   }
 
@@ -243,7 +245,9 @@ try {
   assert.equal(await page.locator('#assistant-input').isVisible(), true)
 
   await sleep(250)
-  assert.deepEqual(browserErrors, [], `Browser console/page errors: ${browserErrors.join(' | ')}`)
+  const expectedProviderConsoleError = 'Failed to load resource: the server responded with a status of 503 ()'
+  const unexpectedBrowserErrors = browserErrors.filter(message => !(acceptedAiUnavailable && message === expectedProviderConsoleError))
+  assert.deepEqual(unexpectedBrowserErrors, [], `Browser console/page errors: ${unexpectedBrowserErrors.join(' | ')}`)
   assert.deepEqual(failedRequests, [], `Failed requests: ${failedRequests.join(' | ')}`)
 } finally {
   await context?.close().catch(() => {})
