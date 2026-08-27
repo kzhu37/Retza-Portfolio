@@ -63,6 +63,14 @@ The transport can inspect signals including:
 
 Searches are bounded by limits on inspected windows, visited nodes, candidate count, and execution time.
 
+### Transport tradeoff: inspectability versus latency
+
+The current transport launches a fixed PowerShell worker on demand. That choice keeps the operating-system bridge easy to inspect, isolates each query in a bounded process, and avoids placing untrusted target text inside executable PowerShell source.
+
+The tradeoff is startup latency. A cold Windows PowerShell process can spend several seconds loading the UI Automation assemblies, so the implementation uses an 8 second default timeout while still bounding the amount of UI tree work performed.
+
+A production evolution could keep a narrowly scoped native or helper process warm and communicate through structured IPC. That would reduce repeated startup cost while preserving the same validation, query limits, and fail-closed matching rules. The current design favors inspectability and failure isolation over minimum possible latency.
+
 ## 4. Candidate scoring and ambiguity rejection
 
 The resolver ranks candidate controls using multiple independent signals rather than relying on one string match.
@@ -225,7 +233,7 @@ The current desktop suite contains 103 Vitest tests across six files.
 
 The browser adaptation adds focused Node tests for semantic target resolution and deterministic scenario routing plus Playwright regression coverage for the built browser experience.
 
-The CI definition is visible in [`.github/workflows/verify.yml`](../.github/workflows/verify.yml). It runs the portfolio-writing check, TypeScript checking, desktop tests, desktop production build, browser API syntax checks, browser unit tests, browser build, and local Playwright regressions. These checks intentionally verify repository-controlled behavior rather than relying on an external deployment alias.
+The CI definition is visible in [`.github/workflows/verify.yml`](../.github/workflows/verify.yml). It runs the public-writing check, TypeScript checking, desktop tests, desktop production build, browser API syntax checks, browser unit tests, browser build, and local Playwright regressions. These checks intentionally verify repository-controlled behavior rather than relying on an external deployment alias.
 
 ## 15. Claim-to-code traceability
 
