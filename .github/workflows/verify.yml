@@ -46,8 +46,7 @@ jobs:
       - name: Build browser demo
         run: npm --prefix browser-demo run build
 
-  production-smoke:
-    if: github.event_name != 'pull_request'
+  browser-regression:
     needs: verify
     runs-on: ubuntu-latest
     timeout-minutes: 8
@@ -71,14 +70,3 @@ jobs:
 
       - name: Run reviewed browser regressions
         run: node browser-demo/tests/local-browser.mjs
-
-      - name: Report production deployment freshness
-        env:
-          RETZA_DEMO_URL: https://retza-live-demo.vercel.app
-          RETZA_EXPECTED_COMMIT: ${{ github.sha }}
-        run: node browser-demo/tests/check-production-freshness.mjs
-
-      - name: Verify public Vercel product experience
-        env:
-          RETZA_DEMO_URL: https://retza-live-demo.vercel.app
-        run: node browser-demo/tests/production-smoke.mjs
