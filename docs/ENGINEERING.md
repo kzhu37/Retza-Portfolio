@@ -1,6 +1,6 @@
 # Retza engineering notes
 
-This document expands the implementation details behind the Retza portfolio README. It focuses on the current Windows application and the public browser adaptation.
+This document expands the implementation details behind the main Retza README. It focuses on the current Windows application, the trust boundaries around visual guidance, and the public browser adaptation.
 
 ## 1. Show Me trust model
 
@@ -225,7 +225,22 @@ The current desktop suite contains 103 Vitest tests across six files.
 
 The browser adaptation adds focused Node tests for semantic target resolution and deterministic scenario routing plus Playwright regression coverage for the deployed experience.
 
-## 15. Engineering principle
+The CI definition is visible in [`.github/workflows/verify.yml`](../.github/workflows/verify.yml). It runs the writing check, TypeScript checking, desktop tests, desktop production build, browser syntax checks, browser unit tests, browser build, local browser regressions, deployment freshness reporting, and a public production smoke test.
+
+## 15. Claim-to-code traceability
+
+The architecture is easiest to evaluate when each major claim can be traced directly to implementation and verification.
+
+| Engineering claim | Implementation | Verification |
+| --- | --- | --- |
+| Model output never supplies trusted screen coordinates | [`src/shared/contracts.ts`](../src/shared/contracts.ts), [`src/main/show-me/target-resolver.ts`](../src/main/show-me/target-resolver.ts) | [`tests/assistant-response.test.ts`](../tests/assistant-response.test.ts), [`src/main/show-me/windows-uia.test.ts`](../src/main/show-me/windows-uia.test.ts) |
+| Live targets come from Windows accessibility evidence | [`src/main/show-me/windows-uia.ts`](../src/main/show-me/windows-uia.ts) | [`src/main/show-me/windows-uia.test.ts`](../src/main/show-me/windows-uia.test.ts) |
+| DPI and multi-monitor conversion is explicit | [`src/main/show-me/geometry.ts`](../src/main/show-me/geometry.ts) | [`src/main/show-me/geometry.test.ts`](../src/main/show-me/geometry.test.ts) |
+| A target is rechecked before and during guidance | [`src/main/show-me/target-resolver.ts`](../src/main/show-me/target-resolver.ts), [`src/main/show-me/lifecycle.ts`](../src/main/show-me/lifecycle.ts) | [`src/main/show-me/lifecycle.test.ts`](../src/main/show-me/lifecycle.test.ts) |
+| Common Windows tasks have a deterministic path | [`src/main/windows-navigation.ts`](../src/main/windows-navigation.ts) | [`tests/windows-navigation.test.ts`](../tests/windows-navigation.test.ts) |
+| Public browser behavior is intentionally sandboxed | [`browser-demo/lib/target-resolver.js`](../browser-demo/lib/target-resolver.js), [`browser-demo/lib/scenarios.js`](../browser-demo/lib/scenarios.js) | [`browser-demo/tests/target-resolver.node-test.js`](../browser-demo/tests/target-resolver.node-test.js), [`browser-demo/tests/local-browser.mjs`](../browser-demo/tests/local-browser.mjs) |
+
+## 16. Engineering principle
 
 Retza's architecture follows one recurring idea:
 
