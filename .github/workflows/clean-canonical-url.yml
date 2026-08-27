@@ -28,6 +28,8 @@ jobs:
           files = subprocess.check_output(['git', 'ls-files', '-z']).decode().split('\0')
           changed = []
           for name in filter(None, files):
+              if name.startswith('.github/workflows/'):
+                  continue
               path = Path(name)
               try:
                   text = path.read_text()
