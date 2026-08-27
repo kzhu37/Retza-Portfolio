@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { chromium } from 'playwright'
 
-const base = process.env.RETZA_DEMO_URL || 'https://retza-live-demo-xiangseanzhu-7370.vercel.app'
+const base = process.env.RETZA_DEMO_URL || 'https://retza-live-demo.vercel.app'
 const origin = new URL(base).origin
 const timeout = 20_000
 const trustedOidcToken = process.env.VERCEL_TRUSTED_OIDC_TOKEN || ''

@@ -7,7 +7,7 @@ A Windows-first desktop accessibility assistant that turns computer questions in
 `Electron` · `TypeScript` · `React` · `Gemini` · `Windows UI Automation` · `Vitest`
 
 <p align="center">
-  <strong><a href="https://retza-live-demo-xiangseanzhu-7370.vercel.app/">Try the live browser demo</a></strong>
+  <strong><a href="https://retza-live-demo.vercel.app/">Try the live browser demo</a></strong>
 </p>
 
 <p align="center">
@@ -33,7 +33,7 @@ That observation changed the project. Retza evolved from a text-based helper int
 
 ## Live browser demo
 
-This repository includes a working browser adaptation of Retza through the **[live browser demo](https://retza-live-demo-xiangseanzhu-7370.vercel.app/)**. It preserves the product idea and trust boundary while adapting system-level features to what a browser can actually do.
+This repository includes a working browser adaptation of Retza through the **[live browser demo](https://retza-live-demo.vercel.app/)**. It preserves the product idea and trust boundary while adapting system-level features to what a browser can actually do.
 
 > **Browser demo note:** The live Retza demo is a sandboxed browser adaptation of Retza's chat, step-by-step walkthrough, proactive-help, and Show Me experience within the demo environment. Unlike the full Windows desktop application, the browser demo cannot inspect other applications, access the live Windows UI Automation tree, monitor system-wide interaction, or display guidance over the user's desktop. Those system-level capabilities are implemented in the desktop application documented below.
 
