@@ -1,6 +1,6 @@
 # Retza engineering notes
 
-This document expands the implementation details behind the main Retza README. It focuses on the current Windows application, the trust boundaries around visual guidance, and the public browser adaptation.
+This document expands the implementation details behind the main Retza README. It focuses on the current Windows application, the trust boundaries around visual guidance, and the sandboxed browser adaptation.
 
 ## 1. Show Me trust model
 
@@ -110,7 +110,7 @@ Retza therefore stores an observation of the resolved target, then re-queries th
 
 A changed window, changed target, screen-layout revision, new occluder, or missing control can dismiss the guide.
 
-This is important because target location is not treated as permanent state.
+Target location is not treated as permanent state.
 
 ## 7. Deterministic navigation
 
@@ -176,7 +176,7 @@ The Electron main process owns provider calls and exposes only a narrow IPC brid
 
 When Electron secure storage is available, saved keys use `safeStorage`. The application also removes a `.env` key from the inherited process environment after startup so child processes do not automatically receive it.
 
-The public browser adaptation follows the same principle. Provider credentials, when configured, stay inside the server-side function.
+The browser adaptation follows the same principle when a server-side provider is configured. Provider credentials stay outside client-side code.
 
 ## 12. Proactive help heuristics
 
@@ -195,7 +195,7 @@ The user can pause Watching from the interface.
 
 ## 13. Browser adaptation
 
-The public browser demo is a sandboxed adaptation, not a replacement for the Windows application.
+The browser version is a sandboxed adaptation, not a replacement for the Windows application.
 
 Its Show Me resolver uses:
 
@@ -208,7 +208,7 @@ Its Show Me resolver uses:
 
 It rejects ambiguous, missing, hidden, disabled, or unsupported targets.
 
-The browser cannot inspect other applications, access Windows UI Automation, monitor system-wide interaction, or render a guide over the real desktop. The demo labels these boundaries explicitly.
+The browser cannot inspect other applications, access Windows UI Automation, monitor system-wide interaction, or render a guide over the real desktop. Those limitations are labeled directly in the interface.
 
 ## 14. Verification map
 
@@ -223,9 +223,9 @@ The current desktop suite contains 103 Vitest tests across six files.
 | UI Automation matching | [`src/main/show-me/windows-uia.test.ts`](../src/main/show-me/windows-uia.test.ts) |
 | Show Me lifecycle | [`src/main/show-me/lifecycle.test.ts`](../src/main/show-me/lifecycle.test.ts) |
 
-The browser adaptation adds focused Node tests for semantic target resolution and deterministic scenario routing plus Playwright regression coverage for the deployed experience.
+The browser adaptation adds focused Node tests for semantic target resolution and deterministic scenario routing plus Playwright regression coverage for the built browser experience.
 
-The CI definition is visible in [`.github/workflows/verify.yml`](../.github/workflows/verify.yml). It runs the writing check, TypeScript checking, desktop tests, desktop production build, browser syntax checks, browser unit tests, browser build, local browser regressions, deployment freshness reporting, and a public production smoke test.
+The CI definition is visible in [`.github/workflows/verify.yml`](../.github/workflows/verify.yml). It runs the portfolio-writing check, TypeScript checking, desktop tests, desktop production build, browser API syntax checks, browser unit tests, browser build, and local Playwright regressions. These checks intentionally verify repository-controlled behavior rather than relying on an external deployment alias.
 
 ## 15. Claim-to-code traceability
 
@@ -238,7 +238,7 @@ The architecture is easiest to evaluate when each major claim can be traced dire
 | DPI and multi-monitor conversion is explicit | [`src/main/show-me/geometry.ts`](../src/main/show-me/geometry.ts) | [`src/main/show-me/geometry.test.ts`](../src/main/show-me/geometry.test.ts) |
 | A target is rechecked before and during guidance | [`src/main/show-me/target-resolver.ts`](../src/main/show-me/target-resolver.ts), [`src/main/show-me/lifecycle.ts`](../src/main/show-me/lifecycle.ts) | [`src/main/show-me/lifecycle.test.ts`](../src/main/show-me/lifecycle.test.ts) |
 | Common Windows tasks have a deterministic path | [`src/main/windows-navigation.ts`](../src/main/windows-navigation.ts) | [`tests/windows-navigation.test.ts`](../tests/windows-navigation.test.ts) |
-| Public browser behavior is intentionally sandboxed | [`browser-demo/lib/target-resolver.js`](../browser-demo/lib/target-resolver.js), [`browser-demo/lib/scenarios.js`](../browser-demo/lib/scenarios.js) | [`browser-demo/tests/target-resolver.node-test.js`](../browser-demo/tests/target-resolver.node-test.js), [`browser-demo/tests/local-browser.mjs`](../browser-demo/tests/local-browser.mjs) |
+| Browser targeting is intentionally sandboxed | [`browser-demo/lib/target-resolver.js`](../browser-demo/lib/target-resolver.js), [`browser-demo/lib/scenarios.js`](../browser-demo/lib/scenarios.js) | [`browser-demo/tests/target-resolver.node-test.js`](../browser-demo/tests/target-resolver.node-test.js), [`browser-demo/tests/local-browser.mjs`](../browser-demo/tests/local-browser.mjs) |
 
 ## 16. Engineering principle
 
