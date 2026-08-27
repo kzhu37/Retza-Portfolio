@@ -17,6 +17,8 @@ Early design priorities included:
 - examples and definitions for unfamiliar terms; and
 - AI-generated help that could adapt to a question rather than returning one fixed article.
 
+The presentation framing described this as **zero barrier accessibility**: remove unnecessary assumptions between the user and the next useful action.
+
 ## 2. First iteration: "be simple" was not specific enough
 
 An early assumption was that telling the AI to keep its answer simple would solve most of the communication problem.
@@ -48,6 +50,8 @@ The team responded by developing the visual-guidance direction that later became
 
 That produced the second important lesson: **understanding an instruction is not the same thing as being able to act on it.**
 
+The final presentation framed this more broadly as **designing for confidence, not just functionality**. The goal was not only to make the software produce a correct step. The next action also had to feel clear enough for an unfamiliar user to attempt.
+
 ## 4. Help versus interference
 
 The project also explored a harder human-computer interaction question: how can software offer help before the user explicitly asks without becoming intrusive?
@@ -58,7 +62,21 @@ Voice support was discussed as a future direction for users who may find reading
 
 The current showcase later turns these ideas into bounded interaction heuristics, a cooldown, a visible Watching control, and optional speech input.
 
-## 5. Original project contribution boundaries
+## 5. What the retained presentation contributes
+
+The original presentation was intentionally visual and low-text. Its communication strategy mirrored the product: reduce unnecessary explanation, use concrete demonstrations, and make the user's difficulty visible before describing the technology.
+
+Several themes from that material remain central to the public portfolio:
+
+- people can be excluded by interface assumptions even when the underlying feature works;
+- the hardest failures can be human rather than technical;
+- testing should include observation, not only polite verbal feedback;
+- guidance should increase confidence without taking control away from the user; and
+- building for more people starts by noticing who is being left behind.
+
+The public repository uses those retained materials as provenance evidence, but it does not reconstruct old screenshots or slides and present them as untouched originals. Quantitative usability metrics were not established in the retained material, so this portfolio does not invent them.
+
+## 6. Original project contribution boundaries
 
 Original team:
 
@@ -80,7 +98,7 @@ The surviving project material supports the following attribution:
 
 Because the original project was collaborative, this portfolio does not use the current repository's Git history as evidence of the original team division.
 
-## 6. Later public showcase
+## 7. Later public showcase
 
 Kevin later prepared the public `Retza-Portfolio` repository to present and extend the original project.
 
@@ -105,7 +123,7 @@ The current showcase preserves the same central usability problem, then carries 
 
 These current systems should be read as the **showcase phase**, not as a claim that every capability existed in the first classroom prototype.
 
-## 7. What stayed constant
+## 8. What stayed constant
 
 Across both phases, the strongest idea remained the same:
 
@@ -113,10 +131,11 @@ Across both phases, the strongest idea remained the same:
 
 That principle connects the original user testing to the current fail-closed engineering approach.
 
-## 8. Related documentation
+## 9. Related documentation
 
 - [Main portfolio README](../README.md)
 - [Engineering notes](ENGINEERING.md)
+- [Browser adaptation](../browser-demo/README.md)
 - [Show Me target resolver](../src/main/show-me/target-resolver.ts)
 - [Windows UI Automation transport and matcher](../src/main/show-me/windows-uia.ts)
 - [Verification workflow](../.github/workflows/verify.yml)

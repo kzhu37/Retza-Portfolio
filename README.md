@@ -13,7 +13,7 @@ A Windows-first desktop accessibility assistant that turns computer questions in
   &nbsp;·&nbsp;
   <a href="docs/PROJECT_HISTORY.md"><strong>Project history</strong></a>
   &nbsp;·&nbsp;
-  <a href="browser-demo/"><strong>Browser adaptation source</strong></a>
+  <a href="browser-demo/README.md"><strong>Browser adaptation</strong></a>
 </p>
 
 <table>
@@ -33,21 +33,21 @@ A Windows-first desktop accessibility assistant that turns computer questions in
 
 Retza began with a simple question: **what if computer help was designed for people who do not already understand computers?**
 
-The first approach focused on patient language, large readable controls, and numbered instructions. That exposed two different problems. First, asking an AI to "be simple" was not enough. A response could still contain unfamiliar terms, combine several actions, or silently assume setup knowledge. The team moved toward more explicit prompting and one-action guidance.
+The first approach focused on patient language, large readable controls, and numbered instructions. That exposed a problem quickly: asking an AI to "be simple" was not enough. A response could still use unfamiliar terms, combine several actions, or quietly assume setup knowledge that a less experienced user did not have.
 
-Then direct testing exposed the deeper failure. My grandmother could understand an instruction and still scan the screen because she could not find the button or icon it described. That observation changed the product direction. Retza evolved from a text-focused helper toward guided action, eventually leading to **Show Me**, a visual-guidance system that verifies real Windows interface elements before pointing to them.
+Direct testing exposed the deeper failure. My grandmother could understand an instruction and still scan the screen because she could not find the button or icon it described. That observation shifted the product from text-focused help toward guided action and eventually led to **Show Me**, a visual-guidance system that verifies real Windows interface elements before highlighting them.
 
 > **Core engineering principle:** if Retza cannot confidently verify where a control is, it does not point.
 
 ## My role and project provenance
 
-Retza began as a four-person project by **Michael Tetelbaum, Vladimir Dukkardt, Algasem Zabarah, and Kevin Zhu**. My documented original contribution centered on **target-user research, use-case selection, direct user testing, feedback interpretation, product positioning, and project communication**.
+Retza began as a four-person project by **Michael Tetelbaum, Vladimir Dukkardt, Algasem Zabarah, and Kevin Zhu**. My documented original contribution centered on **target-user research, realistic task selection, direct user testing, feedback interpretation, product positioning, and project communication**.
 
-I researched common difficulties less experienced computer users face, shaped realistic example questions, tested Retza directly with my grandmother, and helped translate observed hesitation into product direction. Vladimir led much of the original interface and visual direction. Other teammates led more of the original AI implementation, so I do not claim primary ownership of that original subsystem.
+I researched common difficulties less experienced computer users face, shaped realistic example questions, tested Retza with my grandmother, and helped turn observed hesitation into product direction. Vladimir led much of the original interface and visual direction. Other teammates led more of the original AI implementation, so I do not claim primary ownership of that original subsystem.
 
-I later prepared this public showcase and extended the original concept into the current repository. The showcase adds the present Windows/Electron architecture, defensive Show Me targeting, deterministic navigation, bounded AI-response handling, prerequisite repair, testing and verification, engineering documentation, and the sandboxed browser adaptation. This repository's Git history therefore represents the later showcase phase, not the complete chronology of the original team project.
+I later prepared this public showcase and extended the concept into the current repository. The showcase adds the present Windows/Electron architecture, defensive Show Me targeting, deterministic navigation, bounded AI-response handling, prerequisite repair, testing and verification, engineering documentation, and the sandboxed browser adaptation. The repository's Git history therefore represents the later showcase phase, not the full chronology of the original team project.
 
-For the evidence trail and phase-by-phase distinction, see **[Project history and provenance](docs/PROJECT_HISTORY.md)**.
+See **[Project history and provenance](docs/PROJECT_HISTORY.md)** for the evidence trail and phase-by-phase distinction.
 
 <p align="center">
   <a href="#at-a-glance">At a glance</a> ·
@@ -63,26 +63,25 @@ For the evidence trail and phase-by-phase distinction, see **[Project history an
 | Area | Retza |
 | --- | --- |
 | **Problem** | Computer help often assumes vocabulary and interface knowledge that less experienced users do not have |
-| **Product** | Windows-first assistant for questions, focused walkthroughs, proactive help, and visual guidance |
 | **Key user insight** | Understandable instructions can still fail when the user cannot locate the relevant control |
 | **Technical centerpiece** | Fail-closed Show Me targeting through Windows UI Automation rather than model-generated coordinates |
 | **Guidance strategy** | Deterministic Windows navigation for stable tasks, Gemini for broader questions, and prerequisite repair when setup steps are missing |
 | **Verification** | Windows CI runs type checking, 103 Vitest tests across six files, and a production build; browser checks add 10 focused Node tests and Playwright regression coverage |
-| **Original contribution** | Target-user framing, realistic task selection, direct testing, feedback synthesis, positioning, and communication |
+| **Original contribution** | Target-user framing, task selection, direct testing, feedback synthesis, positioning, and communication |
 | **Showcase phase** | Later public extension with stronger systems engineering, tests, documentation, and a sandboxed browser adaptation |
 
 ## Testing changed the product
 
 Retza was designed for older and less experienced computer users, so the team could not evaluate it only from the perspective of people who already knew where every menu and icon lived.
 
-The retained project materials document testing with my grandmother and with a teammate's younger siblings. The younger testers helped expose unusual or nonsensical questions. Testing with my grandmother produced the more important product insight: **a correct sentence is not necessarily an actionable instruction**.
+The retained project materials document testing with my grandmother and with a teammate's younger siblings. The younger testers helped expose unusual or nonsensical questions. Testing with my grandmother produced the more important insight: **a correct sentence is not necessarily an actionable instruction**.
 
-Her feedback also reinforced why observation mattered. A user can politely say that an instruction makes sense while still hesitating, searching, or being unsure what to click.
+Observation mattered as much as verbal feedback. A user can say that an instruction makes sense while still hesitating, searching, or feeling unsure about what to click next. The goal therefore became **designing for confidence, not just functionality**: make the next action understandable enough to attempt, then avoid visual guidance when the system cannot support it with evidence.
 
 | Stage | What failed | Product response |
 | --- | --- | --- |
 | **Simplify the AI** | "Be simple" could still produce jargon, bundled actions, or hidden assumptions | Make prompts more explicit, prefer concrete language, and separate actions |
-| **Guide one action at a time** | A user could understand the current step but still be unable to find the control | Add visual guidance and later build Show Me around verified semantic targets |
+| **Guide one action at a time** | A user could understand the step but still be unable to find the control | Add visual guidance and later build Show Me around verified semantic targets |
 | **Offer help proactively** | Too many interventions could become distracting or patronizing | Use bounded interaction signals, cooldowns, and a visible user-controlled Watching mode |
 | **Point to real controls** | Approximate or stale highlights could reduce trust | Resolve live UI elements, reject ambiguity, revalidate, and fail closed |
 
@@ -90,7 +89,9 @@ Her feedback also reinforced why observation mattered. A user can politely say t
   <img src="docs/assets/iteration-cycle.svg" alt="Retza development progression from simpler language through prompt refinement and user testing to verified visual guidance" width="100%">
 </p>
 
-The main lesson was that a software failure does not always look like a crash. Retza could behave exactly as programmed and still fail the user if the person could not confidently complete the next action.
+The hardest failures were often human rather than technical. Retza could behave exactly as programmed and still fail the user if the person could not confidently complete the next action.
+
+The original testing was exploratory and qualitative. This portfolio therefore does not claim task-completion percentages, calibrated targeting accuracy, or formal accessibility-study results that were not measured.
 
 ## Show Me: verified visual guidance
 
@@ -113,9 +114,9 @@ window: Settings
 
 Coordinates are intentionally absent from the model-facing contract.
 
-The trusted main process then validates the target, queries the live Windows accessibility tree, scores candidate controls, rejects weak or conflicting evidence, converts Windows geometry into Electron coordinates, and revalidates the same target before and during display.
+The trusted main process validates the target, queries the live Windows accessibility tree, scores candidate controls, rejects weak or conflicting evidence, converts Windows geometry into Electron coordinates, and revalidates the same target before and during display.
 
-Candidates can be rejected when they are ambiguous, hidden, disabled, occluded, off-screen, too broad, associated with the wrong window, or no longer consistent with the original observation. The matcher uses a conservative engineering confidence threshold and rejects close competing matches rather than guessing. The threshold is a defensive implementation heuristic, not a claim of experimentally calibrated user accuracy.
+Candidates can be rejected when they are ambiguous, hidden, disabled, occluded, off-screen, too broad, associated with the wrong window, or no longer consistent with the original observation. The matcher uses a default engineering confidence threshold of **0.78** and a **0.10 ambiguity gap**, then refuses close competing matches instead of guessing. These values are defensive implementation heuristics, not experimentally calibrated claims about user-facing accuracy.
 
 The geometry layer explicitly handles DPI scaling and multi-monitor layouts, including negative monitor origins, monitors above the primary display, controls spanning displays, and display-layout changes while guidance is active.
 
@@ -136,9 +137,9 @@ For implementation detail and claim-to-code traceability, see **[Engineering not
 
 Both model output and renderer input are treated as untrusted at boundaries where they can affect operating-system guidance.
 
-The same defensive approach applies beyond Show Me. Gemini responses are parsed into a bounded application contract before they reach the walkthrough system. API credentials stay outside the renderer, saved keys use Electron `safeStorage` when available, and limited system context is sanitized before it enters a prompt. The context feature does not read document contents or take screenshots.
+Gemini responses are parsed into a bounded application contract before they reach the walkthrough system. API credentials stay outside the renderer, saved keys use Electron `safeStorage` when available, and limited system context is sanitized before it enters a prompt. The context feature does not read document contents or take screenshots.
 
-Proactive support also stays bounded. Retza does not claim to infer emotion. It reacts only to interaction patterns such as approximately 45 seconds of inactivity, repeated nearby clicks, or a long hover, then applies a cooldown and leaves Watching under user control.
+Proactive support is similarly bounded. Retza does not claim to infer emotion. It reacts only to interaction patterns such as approximately 45 seconds of inactivity, repeated nearby clicks, or a long hover, then applies a cooldown and leaves Watching under user control.
 
 ## Major engineering decisions
 
@@ -156,7 +157,7 @@ Proactive support also stays bounded. Retza does not claim to infer emotion. It 
 
 Retza's verification emphasizes failure states as much as successful behavior.
 
-The Windows CI suite currently passes **103 Vitest tests across six test files** and performs TypeScript checking plus an Electron production build. Coverage includes malformed AI responses, Windows-version differences, ambiguous UI Automation matches, hidden or disabled controls, stale state, DPI and multi-monitor geometry, duplicated taskbar controls, Show Me lifecycle behavior, and settings validation.
+The Windows CI suite currently runs **103 Vitest tests across six test files** plus TypeScript checking and an Electron production build. Coverage includes malformed AI responses, Windows-version differences, ambiguous UI Automation matches, hidden or disabled controls, stale state, DPI and multi-monitor geometry, duplicated taskbar controls, Show Me lifecycle behavior, and settings validation.
 
 The browser adaptation adds **10 focused Node tests** for semantic target resolution and deterministic scenario routing. Playwright regression checks exercise Show Me success and failure states, revalidation, accessibility settings, responsive layout, reduced motion, secret exposure, and console or network failures.
 
@@ -174,7 +175,7 @@ Representative implementation and verification paths:
 
 ## From original prototype to current showcase
 
-The original team project established the audience, simplified guidance, friendly interface direction, and the visual-guidance idea. The current showcase carries those ideas further with more defensive systems engineering.
+The original team project established the audience, simplified guidance, direct testing, friendly interface direction, and the visual-guidance idea. The current showcase carries those ideas further with more defensive systems engineering.
 
 | Original direction | Current showcase |
 | --- | --- |
@@ -185,19 +186,18 @@ The original team project established the audience, simplified guidance, friendl
 | Detecting possible struggle explored conceptually | Bounded inactivity, repeated-click, and long-hover heuristics |
 | General AI guidance | Hybrid deterministic Windows knowledge plus Gemini |
 | Approximate visual guidance concept | Ambiguity rejection, stale-target revalidation, DPI conversion, and multi-monitor handling |
-| Early usability focus | Explicit trust boundaries, validation, credential isolation, and verification |
 
 The later engineering stays tied to the same usability problem discovered during testing rather than adding unrelated complexity.
 
 ## Browser adaptation
 
-The [`browser-demo`](browser-demo/) folder demonstrates Retza's core interaction model inside a sandboxed browser environment. It is **not** presented as equivalent to the Windows application.
+The [`browser-demo`](browser-demo/) folder demonstrates Retza's interaction model inside a sandboxed browser environment. It is **not** equivalent to the Windows application.
 
 Inside the simulated computer, Show Me resolves accessible DOM names, roles, semantic IDs, visibility, disabled state, and live bounds. Missing, ambiguous, hidden, or disabled targets are rejected rather than guessed.
 
 The browser adaptation cannot inspect other applications, access the live Windows UI Automation tree, monitor system-wide interaction, or display guidance over the desktop. Those capabilities belong to the Windows application.
 
-This separation keeps the demonstration honest: it shows the interaction model and trust boundary without pretending that a web page has desktop privileges.
+See **[Browser adaptation documentation](browser-demo/README.md)** for supported scenarios, trust boundaries, local use, and verification.
 
 ## Accessibility and scope
 
@@ -249,22 +249,21 @@ The static output is written to `browser-demo/dist`. Serve that directory with a
 
 ```bash
 npm run verify
+npm --prefix browser-demo run verify
 ```
 
-GitHub Actions extends this with browser-specific Node tests and Playwright regression checks.
+GitHub Actions also runs the local browser Playwright regression suite.
 
 ## Reflection
 
 > **Building for everyone starts by noticing who gets left behind.**
 
-Retza changed how I think about software design. A feature can work exactly as programmed and still fail the person using it. Simplifying an interface therefore means more than reducing words or buttons. It means finding the assumptions hidden inside each instruction, observing where users hesitate, and redesigning around what they actually experience.
+Retza changed how I think about software design. A feature can work exactly as programmed and still fail the person using it. Simplifying an interface therefore means more than reducing words or buttons. It means finding assumptions hidden inside instructions, observing where users hesitate, and redesigning around what they actually experience.
 
-The project also changed how I think about AI-assisted software. Flexible language is useful, but a system that guides real actions needs deterministic checks around uncertain output. Retza became strongest when generative assistance was treated as one component inside a larger engineering system rather than as the system itself.
+It also changed how I think about AI-assisted software. Flexible language is useful, but a system that guides real actions needs deterministic checks around uncertain output. Retza became strongest when generative assistance was treated as one component inside a larger engineering system rather than as the system itself.
 
 ## Collaboration and credits
 
 Original team: **Michael Tetelbaum, Vladimir Dukkardt, Algasem Zabarah, and Kevin Zhu**.
 
-My original contribution focused on target-user research, realistic task selection, direct testing with my grandmother, feedback synthesis, product positioning, and project communication. The original project was collaborative, and I do not claim primary ownership of subsystems led by teammates.
-
-I later prepared and extended this public showcase. For a more detailed separation between original-team work, retained presentation evidence, and later showcase engineering, see **[Project history and provenance](docs/PROJECT_HISTORY.md)**.
+My original contribution focused on target-user research, realistic task selection, direct testing, feedback synthesis, product positioning, and communication. I later prepared and extended this public showcase. For the fuller attribution and phase boundary, see **[Project history and provenance](docs/PROJECT_HISTORY.md)**.
