@@ -183,9 +183,9 @@ try {
   assert.equal(await page.getByText(/accelerated demo of proactive help/i).isVisible(), true)
 
   // Text-size accessibility controls work.
-  await page.getByLabel('Large').check()
+  await page.getByRole('radio', { name: 'Large', exact: true }).check()
   assert.equal(await page.locator('body').evaluate(node => node.classList.contains('text-large')), true)
-  await page.getByLabel('Extra large').check()
+  await page.getByRole('radio', { name: 'Extra large', exact: true }).check()
   assert.equal(await page.locator('body').evaluate(node => node.classList.contains('text-xlarge')), true)
 
   // Speech is either available or presents the documented graceful fallback.
