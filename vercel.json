@@ -3,7 +3,6 @@
   "installCommand": "echo 'Retza browser demo has no install-time dependencies'",
   "buildCommand": "node browser-demo/build.mjs",
   "outputDirectory": "browser-demo/dist",
-  "alias": ["retza-live-demo.vercel.app"],
   "functions": {
     "api/chat.js": {
       "maxDuration": 10
