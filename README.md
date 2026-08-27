@@ -9,7 +9,7 @@ A Windows-first desktop accessibility assistant that turns computer questions in
 [![Verify](https://github.com/kzhu37/Retza-Portfolio/actions/workflows/verify.yml/badge.svg)](https://github.com/kzhu37/Retza-Portfolio/actions/workflows/verify.yml)
 
 <p align="center">
-  <strong><a href="https://retza-live-demo.vercel.app/">Try the live browser demo</a></strong>
+  <strong><a href="browser-demo/">Explore the browser adaptation</a></strong>
   &nbsp;·&nbsp;
   <a href="docs/ENGINEERING.md">Read the engineering notes</a>
 </p>
@@ -43,7 +43,7 @@ That observation changed the direction of the project. Retza evolved from a text
   <a href="#how-show-me-works">Show Me</a> ·
   <a href="#architecture-and-trust-boundaries">Architecture</a> ·
   <a href="#testing-and-reliability">Testing</a> ·
-  <a href="#live-browser-demo">Browser demo</a> ·
+  <a href="#browser-adaptation">Browser adaptation</a> ·
   <a href="#run-locally">Run locally</a> ·
   <a href="#contribution-and-collaboration">Contribution</a>
 </p>
@@ -58,7 +58,7 @@ That observation changed the direction of the project. Retza evolved from a text
 | **Technical centerpiece** | Fail-closed Show Me targeting through Windows UI Automation rather than model-generated coordinates |
 | **Guidance strategy** | Deterministic Windows navigation for stable tasks, Gemini for broader questions, and prerequisite repair when setup steps are missing |
 | **Reliability** | Windows CI runs type checking, 103 Vitest tests across six files, and a production build; browser checks add 10 focused Node tests and Playwright regression coverage |
-| **Public demo** | Sandboxed browser adaptation that demonstrates the interaction model without pretending to have desktop privileges |
+| **Browser adaptation** | Sandboxed implementation of the core interaction model, kept separate from desktop-only privileges |
 
 ## Testing changed the product
 
@@ -136,8 +136,6 @@ For implementation detail and code references, see **[Engineering notes](docs/EN
   <img src="docs/assets/architecture.svg" alt="Retza architecture showing the React renderer, restricted preload bridge, trusted Electron main process, Gemini, and Windows UI Automation" width="100%">
 </p>
 
-Retza separates presentation from the systems that hold credentials, inspect Windows state, and resolve screen geometry.
-
 | Layer | Responsibility |
 | --- | --- |
 | **React renderer** | Chat, walkthrough progress, settings, speech input, fox companion, and Show Me presentation |
@@ -165,11 +163,11 @@ The original project explored whether Retza could notice when someone might be s
 
 The implementation deliberately avoids claiming to infer frustration or emotion. It reacts only to bounded interaction patterns, including approximately 45 seconds of inactivity, repeated nearby clicks, or a long hover around the same area. A cooldown limits repeated interventions, and the user can pause Watching from the main interface.
 
-The design principle is conservative: **offer a low-cost opportunity for help, but keep control with the user.**
-
 <p align="center">
   <img src="docs/assets/struggle-detection.svg" alt="Retza proactive-help heuristics using inactivity, repeated nearby clicks, long hover, cooldown, and user control" width="100%">
 </p>
+
+The design principle is conservative: **offer a low-cost opportunity for help, but keep control with the user.**
 
 ## Testing and reliability
 
@@ -187,7 +185,7 @@ The Windows CI suite currently passes **103 Vitest tests across six test files**
 - Show Me lifecycle behavior; and
 - settings validation.
 
-The browser adaptation adds **10 focused Node tests** for semantic target resolution and deterministic scenario routing. Playwright regression checks cover the public demo's main flows, Show Me success and failure states, revalidation, accessibility settings, responsive layout, reduced motion, secret exposure, same-origin requests, and console or network failures.
+The browser adaptation adds **10 focused Node tests** for semantic target resolution and deterministic scenario routing. Playwright regression checks exercise the browser experience locally, including Show Me success and failure states, revalidation, accessibility settings, responsive layout, reduced motion, secret exposure, and console or network failures.
 
 The repository also runs a writing check that blocks forbidden long-dash characters from portfolio-facing Markdown, HTML, and text files.
 
@@ -201,17 +199,17 @@ Representative implementation and test files:
 - [`tests/windows-navigation.test.ts`](tests/windows-navigation.test.ts)
 - [`browser-demo/tests/target-resolver.node-test.js`](browser-demo/tests/target-resolver.node-test.js)
 
-## Live browser demo
+## Browser adaptation
 
-The **[live browser demo](https://retza-live-demo.vercel.app/)** makes Retza's product idea testable without pretending that a web page has desktop privileges.
+The [`browser-demo`](browser-demo/) folder adapts Retza's core interaction model to a sandboxed browser environment without pretending that a web page has desktop privileges.
 
 It includes deterministic walkthroughs for Bluetooth, Wi-Fi, display settings, sound output, Windows Update, app removal, Windows Search, and Device Manager. Inside the simulated computer, Show Me resolves accessible DOM names, roles, semantic IDs, live visibility, and current element bounds. Missing, ambiguous, hidden, or disabled targets are rejected rather than guessed.
 
-The browser demo is intentionally sandboxed. It cannot inspect other applications, access the real Windows UI Automation tree, monitor system-wide interaction, or display guidance over the desktop. Those capabilities belong to the Windows application.
+The browser version cannot inspect other applications, access the real Windows UI Automation tree, monitor system-wide interaction, or display guidance over the desktop. Those capabilities belong to the Windows application.
 
-Broader chat is routed through a server-side function when a configured provider is available. The public demo remains useful when generative AI is unavailable because its core scenarios and Show Me behavior are deterministic.
+Broader chat is designed to use a server-side provider when one is configured. The core scenarios and Show Me behavior remain deterministic so the browser adaptation is still useful without generative AI.
 
-This separation makes the demo a proof of the product's interaction model and trust boundary rather than a fake browser reimplementation of Windows UI Automation.
+This separation makes the browser version a proof of the product's interaction model and trust boundary rather than a fake reimplementation of Windows UI Automation.
 
 ## Major engineering decisions
 
@@ -223,7 +221,7 @@ This separation makes the demo a proof of the product's interaction model and tr
 | Wrong visual guidance can damage trust | Use semantic targeting, confidence scoring, ambiguity rejection, actionability checks, occlusion checks, and revalidation |
 | Windows and Electron use different coordinate spaces | Model physical pixels, screen DIP, and overlay-local coordinates explicitly |
 | Proactive help can become intrusive | Use conservative thresholds, cooldowns, and a visible user-controlled Watching mode |
-| A browser demo cannot reproduce desktop privileges | Demonstrate the interaction model honestly inside a sandbox |
+| A browser cannot reproduce desktop privileges | Demonstrate the interaction model honestly inside a sandbox |
 
 ## From first prototype to current system
 
@@ -265,7 +263,7 @@ These are accessibility-oriented design decisions. Retza has not undergone forma
 | Build tooling | Electron Vite, Vite |
 | Generative assistance | Google Generative AI SDK |
 | Windows UI locating | Windows UI Automation through PowerShell and .NET |
-| Browser demo | HTML, CSS, JavaScript, Vercel Functions |
+| Browser adaptation | HTML, CSS, JavaScript, optional server-side function |
 | Interaction monitoring | `uiohook-napi` |
 | Styling | Tailwind CSS and custom CSS |
 | Testing | Vitest, Node test runner, Playwright |
@@ -279,7 +277,7 @@ These are accessibility-oriented design decisions. Retza has not undergone forma
 - Windows 10 or Windows 11 for full Show Me functionality
 - a Gemini API key for generative questions in the desktop application
 
-### Install and start
+### Desktop application
 
 ```bash
 git clone https://github.com/kzhu37/Retza-Portfolio.git
@@ -301,21 +299,29 @@ RETZA_GEMINI_MODEL=gemini-2.5-flash-lite
 
 Never commit a real API key.
 
+### Browser adaptation
+
+```bash
+npm --prefix browser-demo run build
+```
+
+The static output is written to `browser-demo/dist`. Serve that directory with a local static server to exercise the deterministic walkthrough and Show Me flows.
+
 ### Verify the project
 
 ```bash
 npm run verify
 ```
 
-This runs type checking, the automated desktop test suite, and the desktop production build. Browser-specific tests and production regression checks also run in GitHub Actions.
+GitHub Actions extends this with browser-specific Node tests and Playwright regression checks.
 
 ## Platform scope and limitations
 
 Retza should currently be treated as a **Windows-first** application.
 
 - Exact Show Me locating is implemented for Windows through Windows UI Automation.
-- The public browser demo can locate only controls inside its simulated computer.
-- The browser demo cannot inspect other applications, access the live Windows accessibility tree, monitor system-wide interaction, or render guidance over the desktop.
+- The browser adaptation can locate only controls inside its simulated computer.
+- The browser adaptation cannot inspect other applications, access the live Windows accessibility tree, monitor system-wide interaction, or render guidance over the desktop.
 - Build configuration contains macOS and Linux packaging targets, but feature parity is not complete.
 - Visible-window context is more complete on Windows than on macOS.
 - Speech recognition currently uses English (`en-US`) when the Chromium speech API is available.
