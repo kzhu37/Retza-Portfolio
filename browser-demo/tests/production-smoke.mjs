@@ -83,7 +83,9 @@ try {
 
   await page.goto(base, { waitUntil: 'domcontentloaded', timeout: 30_000 })
   try {
-    await page.getByText('Browser demo', { exact: true }).waitFor({ state: 'visible', timeout: 15_000 })
+    const scopeLabel = page.locator('.scope-banner strong')
+    await scopeLabel.waitFor({ state: 'visible', timeout: 15_000 })
+    assert.equal((await scopeLabel.textContent())?.trim(), 'Browser demo')
   } catch {
     const title = await page.title().catch(() => '')
     const body = ((await page.locator('body').innerText().catch(() => '')) || '').slice(0, 1200)
