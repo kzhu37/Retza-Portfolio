@@ -2,7 +2,25 @@
 
 This document separates the **original four-person project** from the **later public repository phase**. It exists so current technical claims remain strong without blurring who did what or implying that every present capability existed in the first version.
 
-## 1. Original problem framing
+## 1. Chronology
+
+Retained project notes and presentation materials support this broad sequence:
+
+| Period | Development focus |
+| --- | --- |
+| **Late April 2026** | Define the accessibility problem, target audience, and zero-barrier product direction |
+| **Late April to early May 2026** | Build the first working assistant and refine simple, numbered guidance |
+| **Early to mid-May 2026** | Test with family users, including Kevin's grandmother and Vladimir's younger siblings, then interpret observed hesitation and unusual questions |
+| **Mid-May 2026** | Strengthen walkthrough behavior, develop the visual-guidance direction, polish the interface, and prepare the final presentation |
+| **Later public repository phase** | Extend the concept through a Windows-first Electron architecture, deterministic navigation, defensive AI handling, verified Show Me targeting, automated verification, and a sandboxed browser adaptation |
+
+The current public repository was created later and should not be read as a complete reconstruction of the original team's Git history.
+
+<p align="center">
+  <img src="assets/project-phases.svg" alt="Retza project phases from the original collaborative accessibility project to the later Windows engineering extension" width="100%">
+</p>
+
+## 2. Original problem framing
 
 Retza was built around a simple accessibility problem: computer help often assumes that the user already understands the vocabulary and visual conventions of a computer interface.
 
@@ -19,7 +37,7 @@ Early design priorities included:
 
 The presentation framing described this as **zero barrier accessibility**: remove unnecessary assumptions between the user and the next useful action.
 
-## 2. First iteration: "be simple" was not specific enough
+## 3. First iteration: "be simple" was not specific enough
 
 An early assumption was that telling the AI to keep its answer simple would solve most of the communication problem.
 
@@ -36,7 +54,7 @@ The prompting approach therefore became more explicit about defining necessary t
 
 That produced the first important lesson: **shorter text is not automatically clearer text.**
 
-## 3. Direct user testing changed the product
+## 4. Direct user testing changed the product
 
 The retained presentation materials document testing with **Kevin Zhu's grandmother** and with **Vladimir Dukkardt's younger siblings**.
 
@@ -52,7 +70,7 @@ That produced the second important lesson: **understanding an instruction is not
 
 The final presentation framed this more broadly as **designing for confidence, not just functionality**.
 
-## 4. Help versus interference
+## 5. Help versus interference
 
 The project also explored a harder human-computer interaction question: how can software offer help before the user explicitly asks without becoming intrusive?
 
@@ -62,15 +80,13 @@ Voice support was discussed as a future direction for users who may find reading
 
 The later repository phase turns those ideas into bounded interaction heuristics, a cooldown, a visible Watching control, and optional speech input.
 
-## 5. The presentation reflected the product philosophy
+## 6. The presentation reflected the product philosophy
 
 The original presentation itself used the same communication principle as the product: **less is more when extra explanation increases confusion**.
 
 Its opening demonstration showed a teammate struggling with a computer task while other people piled on technical instructions. Retza then reframed the situation with a calmer, simpler response. The slides were intentionally visual and low-text so the audience saw the usability problem before receiving the technical explanation.
 
-That material remains useful because it shows that accessibility was not added as a label after implementation. The team was already thinking about cognitive load, confidence, and the gap between a correct explanation and a usable next step.
-
-Several themes from the presentation remain central to the current repository:
+Several presentation themes remain central to the current repository:
 
 - people can be excluded by interface assumptions even when the underlying feature works;
 - the hardest failures can be human rather than technical;
@@ -78,9 +94,9 @@ Several themes from the presentation remain central to the current repository:
 - guidance should increase confidence without taking control away from the user; and
 - building for more people starts by noticing who is being left behind.
 
-The public repository does not reconstruct old screenshots or slides and present them as untouched originals. Quantitative usability metrics were not established in the retained material, so none are invented here.
+The public repository does not reconstruct old screenshots or slides and present them as untouched originals. Quantitative usability metrics were not established in the retained material, so none are invented here. Presentation-only pricing, investment, and market projections are also not treated as measured project outcomes.
 
-## 6. Original project contribution boundaries
+## 7. Original project contribution boundaries
 
 Original team:
 
@@ -102,7 +118,7 @@ The surviving project material supports the following attribution:
 
 Because the original project was collaborative, the current repository's Git history is not used as evidence for the original team division.
 
-## 7. Later public repository phase
+## 8. Later public repository phase
 
 Kevin later prepared and extended the public `Retza-Portfolio` repository around the same central usability problem.
 
@@ -129,7 +145,7 @@ These systems belong to the **later repository phase**. They should not be read 
 
 The current repository's Git history documents that later phase. It does not reconstruct the full chronology or authorship of the original four-person project.
 
-## 8. What stayed constant
+## 9. What stayed constant
 
 Across both phases, the strongest idea remained the same:
 
@@ -137,9 +153,14 @@ Across both phases, the strongest idea remained the same:
 
 That principle connects the original user testing to the current fail-closed engineering approach.
 
-## 9. Related documentation
+## 10. Evidence boundaries
+
+A concise record of what the retained project materials do and do not support is in [Original project evidence](ORIGINAL_PROJECT_EVIDENCE.md). That document exists to keep historical claims separate from later repository engineering.
+
+## 11. Related documentation
 
 - [Main README](../README.md)
+- [Original project evidence](ORIGINAL_PROJECT_EVIDENCE.md)
 - [Engineering notes](ENGINEERING.md)
 - [Browser adaptation](../browser-demo/README.md)
 - [Show Me target resolver](../src/main/show-me/target-resolver.ts)

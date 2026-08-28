@@ -35,6 +35,12 @@ A browser tab cannot reproduce Retza's desktop privileges. This adaptation does 
 
 Those boundaries are deliberate. The browser version demonstrates the interaction model and failure behavior without overstating what a web page can access.
 
+## Server-side provider boundary
+
+The repository root [`../api/`](../api/) folder contains the optional server-side provider boundary used by a hosted browser build.
+
+`api/chat.js` validates and bounds browser requests, keeps provider credentials outside client-side code, constrains model output to the demo's contract, and refuses to claim access to the user's real operating system. The browser adaptation still works through deterministic scenarios when broader provider-backed guidance is unavailable.
+
 ## Structure
 
 | Path | Purpose |
@@ -75,4 +81,4 @@ The browser and desktop versions share a product idea, not the same privilege bo
 
 On Windows, the trusted Electron main process queries real UI Automation evidence, scores candidate controls, handles DPI and multi-monitor geometry, and revalidates targets before and during display. In the browser, the resolver is limited to elements owned by the current page.
 
-For the full Windows trust model, see [`../docs/ENGINEERING.md`](../docs/ENGINEERING.md). For the original project and later showcase distinction, see [`../docs/PROJECT_HISTORY.md`](../docs/PROJECT_HISTORY.md).
+For the full Windows trust model, see [`../docs/ENGINEERING.md`](../docs/ENGINEERING.md). For the original project and later repository distinction, see [`../docs/PROJECT_HISTORY.md`](../docs/PROJECT_HISTORY.md).

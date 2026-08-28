@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="520" viewBox="0 0 1600 520" role="img" aria-labelledby="title desc">
+  <title id="title">Retza project phases</title>
+  <desc id="desc">The original collaborative accessibility project established the user problem and visual-guidance direction. The later public repository extends that idea with Windows engineering, verification, and fail-closed targeting.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="orange" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f97316"/>
+      <stop offset="1" stop-color="#fb923c"/>
+    </linearGradient>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#14b8a6"/>
+      <stop offset="1" stop-color="#2dd4bf"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="520" rx="30" fill="url(#bg)"/>
+
+  <g font-family="Inter, Segoe UI, Arial, sans-serif">
+    <text x="70" y="68" fill="#f8fafc" font-size="38" font-weight="800">One problem, two development phases</text>
+    <text x="70" y="108" fill="#94a3b8" font-size="20">The public repository extends the original user-tested concept without rewriting its authorship.</text>
+
+    <g transform="translate(70 155)">
+      <rect width="620" height="275" rx="26" fill="#172033" stroke="#f97316" stroke-width="3"/>
+      <rect x="28" y="28" width="192" height="34" rx="17" fill="url(#orange)"/>
+      <text x="124" y="51" text-anchor="middle" fill="#fff" font-size="14" font-weight="800">LATE APRIL TO MID-MAY 2026</text>
+      <text x="28" y="105" fill="#f8fafc" font-size="28" font-weight="800">Original collaborative project</text>
+      <g fill="#cbd5e1" font-size="18">
+        <text x="42" y="151">• Define older and less experienced users as the audience</text>
+        <text x="42" y="188">• Replace dense help with simple, numbered guidance</text>
+        <text x="42" y="225">• Test with Kevin's grandmother and younger users</text>
+        <text x="42" y="262">• Observe the gap between understanding and locating</text>
+      </g>
+    </g>
+
+    <g transform="translate(910 155)">
+      <rect width="620" height="275" rx="26" fill="#172033" stroke="#2dd4bf" stroke-width="3"/>
+      <rect x="28" y="28" width="164" height="34" rx="17" fill="url(#teal)"/>
+      <text x="110" y="51" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="900">LATER REPOSITORY PHASE</text>
+      <text x="28" y="105" fill="#f8fafc" font-size="28" font-weight="800">Windows engineering extension</text>
+      <g fill="#cbd5e1" font-size="18">
+        <text x="42" y="151">• Build the Windows-first Electron architecture</text>
+        <text x="42" y="188">• Resolve live UI Automation targets and reject ambiguity</text>
+        <text x="42" y="225">• Add revalidation, DPI geometry, and deterministic paths</text>
+        <text x="42" y="262">• Add automated verification and a sandboxed browser demo</text>
+      </g>
+    </g>
+
+    <g stroke="#64748b" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M714 292 H884"/>
+      <path d="M866 274 L886 292 L866 310"/>
+    </g>
+    <rect x="690" y="348" width="220" height="50" rx="25" fill="#0b1220" stroke="#334155"/>
+    <text x="800" y="379" text-anchor="middle" fill="#e2e8f0" font-size="15" font-weight="700">Same principle: actionable confidence</text>
+
+    <text x="800" y="482" text-anchor="middle" fill="#94a3b8" font-size="17">
+      The original phase established the human problem. The later phase turns that insight into a stricter trust boundary.
+    </text>
+  </g>
+</svg>

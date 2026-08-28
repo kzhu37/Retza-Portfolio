@@ -1,9 +1,15 @@
 {
   "name": "retza",
   "version": "1.0.0",
+  "private": true,
   "description": "Context-aware desktop accessibility assistant with step-by-step guidance and verified Windows UI targeting",
   "main": "./out/main/index.js",
-  "author": "Retza Team",
+  "author": "Kevin Zhu",
+  "contributors": [
+    "Michael Tetelbaum",
+    "Vladimir Dukkardt",
+    "Algasem Zabarah"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/kzhu37/Retza-Portfolio.git"
