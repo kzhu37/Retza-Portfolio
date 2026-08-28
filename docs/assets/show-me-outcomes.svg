@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="390" viewBox="0 0 1280 390" role="img" aria-labelledby="title desc">
+  <title id="title">Retza Show Me outcomes</title>
+  <desc id="desc">A verified target is highlighted, while ambiguous, blocked, stale, or incomplete evidence causes Retza to refuse to point.</desc>
+  <rect width="1280" height="390" rx="28" fill="#0f172a"/>
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <text x="58" y="62" fill="#f8fafc" font-size="34" font-weight="800">The safe outcome is sometimes no highlight</text>
+    <text x="58" y="98" fill="#cbd5e1" font-size="19">Show Me treats refusal as a feature when the evidence is not strong enough.</text>
+
+    <g transform="translate(70 135)">
+      <rect width="535" height="200" rx="24" fill="#13291f" stroke="#22c55e" stroke-width="3"/>
+      <circle cx="48" cy="48" r="25" fill="#22c55e"/>
+      <text x="48" y="57" text-anchor="middle" fill="#052e16" font-size="26" font-weight="900">✓</text>
+      <text x="92" y="50" fill="#f8fafc" font-size="25" font-weight="800">Verified target</text>
+      <text x="32" y="98" fill="#d1fae5" font-size="18">Strong semantic match + correct window</text>
+      <text x="32" y="129" fill="#d1fae5" font-size="18">Visible + actionable + not occluded</text>
+      <text x="32" y="160" fill="#d1fae5" font-size="18">Fresh evidence after revalidation</text>
+      <rect x="326" y="116" width="170" height="48" rx="15" fill="#22c55e"/>
+      <text x="411" y="147" text-anchor="middle" fill="#052e16" font-size="18" font-weight="850">Highlight shown</text>
+    </g>
+
+    <g transform="translate(675 135)">
+      <rect width="535" height="200" rx="24" fill="#2a1717" stroke="#fb7185" stroke-width="3"/>
+      <circle cx="48" cy="48" r="25" fill="#fb7185"/>
+      <text x="48" y="56" text-anchor="middle" fill="#4c0519" font-size="23" font-weight="900">×</text>
+      <text x="92" y="50" fill="#f8fafc" font-size="25" font-weight="800">Insufficient evidence</text>
+      <text x="32" y="98" fill="#ffe4e6" font-size="18">Ambiguous, blocked, hidden, or disabled</text>
+      <text x="32" y="129" fill="#ffe4e6" font-size="18">Wrong window, stale target, or incomplete search</text>
+      <text x="32" y="160" fill="#ffe4e6" font-size="18">Retza does not convert uncertainty into coordinates</text>
+      <rect x="326" y="116" width="170" height="48" rx="15" fill="#fb7185"/>
+      <text x="411" y="147" text-anchor="middle" fill="#4c0519" font-size="18" font-weight="850">Refuse to point</text>
+    </g>
+  </g>
+</svg>

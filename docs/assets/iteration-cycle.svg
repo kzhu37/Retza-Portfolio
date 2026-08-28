@@ -1,70 +1,57 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="520" viewBox="0 0 1600 520" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="500" viewBox="0 0 1280 500" role="img" aria-labelledby="title desc">
   <title id="title">Retza development progression</title>
-  <desc id="desc">Five stages show the project moving from simpler AI language, through prompt refinement and user testing, to the discovery that understandable instructions were not always actionable and finally to verified visual guidance.</desc>
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0f172a"/>
-      <stop offset="1" stop-color="#111827"/>
-    </linearGradient>
-  </defs>
-  <rect width="1600" height="520" rx="30" fill="url(#bg)"/>
-  <g font-family="Inter, Segoe UI, Arial, sans-serif">
-    <text x="70" y="68" fill="#f8fafc" font-size="38" font-weight="800">Testing changed the product</text>
-    <text x="70" y="108" fill="#94a3b8" font-size="21">Each stage exposed a different assumption hidden inside "simple" computer help.</text>
+  <desc id="desc">Five stages show the project moving from simpler AI language through user testing to verified visual guidance.</desc>
+  <rect width="1280" height="500" rx="28" fill="#0f172a"/>
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <text x="58" y="62" fill="#f8fafc" font-size="34" font-weight="800">Testing changed the product</text>
+    <text x="58" y="98" fill="#cbd5e1" font-size="19">Each stage exposed a different assumption hidden inside "simple" computer help.</text>
 
-    <g transform="translate(55 170)">
-      <rect width="270" height="230" rx="24" fill="#172033" stroke="#334155" stroke-width="2"/>
-      <text x="26" y="42" fill="#fb923c" font-size="16" font-weight="800">1. INITIAL IDEA</text>
-      <text x="26" y="84" fill="#f8fafc" font-size="24" font-weight="800">Simplify the AI</text>
-      <text x="26" y="126" fill="#cbd5e1" font-size="17">Large readable controls</text>
-      <text x="26" y="158" fill="#cbd5e1" font-size="17">and shorter instructions.</text>
-      <text x="26" y="198" fill="#94a3b8" font-size="15">Assumption: simple words</text>
-      <text x="26" y="222" fill="#94a3b8" font-size="15">would solve the problem.</text>
+    <g transform="translate(40 150)">
+      <rect width="225" height="245" rx="22" fill="#172033" stroke="#334155" stroke-width="2"/>
+      <text x="20" y="40" fill="#fb923c" font-size="15" font-weight="800">1. INITIAL IDEA</text>
+      <text x="20" y="80" fill="#f8fafc" font-size="22" font-weight="800">Simplify the AI</text>
+      <text x="20" y="122" fill="#cbd5e1" font-size="17">Readable controls</text>
+      <text x="20" y="150" fill="#cbd5e1" font-size="17">and shorter steps.</text>
+      <text x="20" y="196" fill="#94a3b8" font-size="16">Assumption: simpler</text>
+      <text x="20" y="221" fill="#94a3b8" font-size="16">words were enough.</text>
     </g>
 
-    <g transform="translate(360 170)">
-      <rect width="270" height="230" rx="24" fill="#172033" stroke="#334155" stroke-width="2"/>
-      <text x="26" y="42" fill="#2dd4bf" font-size="16" font-weight="800">2. PROMPT ITERATION</text>
-      <text x="26" y="84" fill="#f8fafc" font-size="24" font-weight="800">Make actions explicit</text>
-      <text x="26" y="126" fill="#cbd5e1" font-size="17">Define unfamiliar terms,</text>
-      <text x="26" y="158" fill="#cbd5e1" font-size="17">avoid bundled actions,</text>
-      <text x="26" y="190" fill="#cbd5e1" font-size="17">reduce hidden assumptions.</text>
+    <g transform="translate(285 150)">
+      <rect width="225" height="245" rx="22" fill="#172033" stroke="#334155" stroke-width="2"/>
+      <text x="20" y="40" fill="#2dd4bf" font-size="15" font-weight="800">2. PROMPT ITERATION</text>
+      <text x="20" y="80" fill="#f8fafc" font-size="22" font-weight="800">Make actions explicit</text>
+      <text x="20" y="122" fill="#cbd5e1" font-size="17">Define terms.</text>
+      <text x="20" y="150" fill="#cbd5e1" font-size="17">Separate actions.</text>
+      <text x="20" y="178" fill="#cbd5e1" font-size="17">Reduce assumptions.</text>
     </g>
 
-    <g transform="translate(665 170)">
-      <rect width="270" height="230" rx="24" fill="#172033" stroke="#334155" stroke-width="2"/>
-      <text x="26" y="42" fill="#2dd4bf" font-size="16" font-weight="800">3. USER TESTING</text>
-      <text x="26" y="84" fill="#f8fafc" font-size="24" font-weight="800">Observe behavior</text>
-      <text x="26" y="126" fill="#cbd5e1" font-size="17">Grandmother testing</text>
-      <text x="26" y="158" fill="#cbd5e1" font-size="17">revealed hesitation that</text>
-      <text x="26" y="190" fill="#cbd5e1" font-size="17">verbal feedback could miss.</text>
+    <g transform="translate(530 150)">
+      <rect width="225" height="245" rx="22" fill="#172033" stroke="#334155" stroke-width="2"/>
+      <text x="20" y="40" fill="#2dd4bf" font-size="15" font-weight="800">3. USER TESTING</text>
+      <text x="20" y="80" fill="#f8fafc" font-size="22" font-weight="800">Observe behavior</text>
+      <text x="20" y="122" fill="#cbd5e1" font-size="17">Grandmother testing</text>
+      <text x="20" y="150" fill="#cbd5e1" font-size="17">revealed hesitation</text>
+      <text x="20" y="178" fill="#cbd5e1" font-size="17">that words could miss.</text>
     </g>
 
-    <g transform="translate(970 170)">
-      <rect width="270" height="230" rx="24" fill="#172033" stroke="#f97316" stroke-width="3"/>
-      <text x="26" y="42" fill="#fb923c" font-size="16" font-weight="800">4. KEY OBSERVATION</text>
-      <text x="26" y="84" fill="#f8fafc" font-size="24" font-weight="800">Words were not enough</text>
-      <text x="26" y="126" fill="#cbd5e1" font-size="17">A user could understand</text>
-      <text x="26" y="158" fill="#cbd5e1" font-size="17">the instruction and still</text>
-      <text x="26" y="190" fill="#cbd5e1" font-size="17">fail to find the control.</text>
+    <g transform="translate(775 150)">
+      <rect width="225" height="245" rx="22" fill="#172033" stroke="#f97316" stroke-width="3"/>
+      <text x="20" y="40" fill="#fb923c" font-size="15" font-weight="800">4. KEY OBSERVATION</text>
+      <text x="20" y="80" fill="#f8fafc" font-size="22" font-weight="800">Words were not enough</text>
+      <text x="20" y="122" fill="#cbd5e1" font-size="17">A user could understand</text>
+      <text x="20" y="150" fill="#cbd5e1" font-size="17">the instruction but still</text>
+      <text x="20" y="178" fill="#cbd5e1" font-size="17">not find the control.</text>
     </g>
 
-    <g transform="translate(1275 170)">
-      <rect width="270" height="230" rx="24" fill="#172033" stroke="#2dd4bf" stroke-width="3"/>
-      <text x="26" y="42" fill="#2dd4bf" font-size="16" font-weight="800">5. CURRENT DIRECTION</text>
-      <text x="26" y="84" fill="#f8fafc" font-size="24" font-weight="800">Guide with evidence</text>
-      <text x="26" y="126" fill="#cbd5e1" font-size="17">One-action walkthroughs</text>
-      <text x="26" y="158" fill="#cbd5e1" font-size="17">plus verified semantic</text>
-      <text x="26" y="190" fill="#cbd5e1" font-size="17">Show Me targets.</text>
+    <g transform="translate(1020 150)">
+      <rect width="220" height="245" rx="22" fill="#172033" stroke="#2dd4bf" stroke-width="3"/>
+      <text x="20" y="40" fill="#2dd4bf" font-size="15" font-weight="800">5. CURRENT DIRECTION</text>
+      <text x="20" y="80" fill="#f8fafc" font-size="22" font-weight="800">Guide with evidence</text>
+      <text x="20" y="122" fill="#cbd5e1" font-size="17">One-action walkthroughs</text>
+      <text x="20" y="150" fill="#cbd5e1" font-size="17">plus verified semantic</text>
+      <text x="20" y="178" fill="#cbd5e1" font-size="17">Show Me targets.</text>
     </g>
 
-    <g stroke="#64748b" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M332 285 H350"/><path d="M341 276 L351 285 L341 294"/>
-      <path d="M637 285 H655"/><path d="M646 276 L656 285 L646 294"/>
-      <path d="M942 285 H960"/><path d="M951 276 L961 285 L951 294"/>
-      <path d="M1247 285 H1265"/><path d="M1256 276 L1266 285 L1256 294"/>
-    </g>
-
-    <text x="800" y="470" text-anchor="middle" fill="#94a3b8" font-size="18" font-weight="650">The product moved forward by observing failure, not by assuming that technically correct output was enough.</text>
+    <text x="640" y="452" text-anchor="middle" fill="#cbd5e1" font-size="18" font-weight="650">The product moved forward by observing failure, not by assuming technically correct output was enough.</text>
   </g>
 </svg>
