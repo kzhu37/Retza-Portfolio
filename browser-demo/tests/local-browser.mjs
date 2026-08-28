@@ -45,6 +45,13 @@ await new Promise((resolve, reject) => {
 
 const browser = await chromium.launch({ headless: true })
 
+function durationSeconds(value) {
+  const first = String(value).split(',')[0].trim()
+  if (first.endsWith('ms')) return Number.parseFloat(first) / 1000
+  if (first.endsWith('s')) return Number.parseFloat(first)
+  return Number.POSITIVE_INFINITY
+}
+
 try {
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } })
   const page = await context.newPage()
@@ -52,8 +59,8 @@ try {
   page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()) })
   page.on('pageerror', error => consoleErrors.push(error.message))
 
-  // Regression: a validated AI walkthrough must render its steps instead of
-  // discarding them after the introductory message.
+  // A validated provider walkthrough must render its steps and allow a
+  // semantic Show Me target to be positioned from live sandbox bounds.
   await page.route('**/api/chat', async route => {
     await route.fulfill({
       status: 200,
@@ -88,8 +95,8 @@ try {
   await page.getByText(/Verified from sandbox semantics/i).waitFor()
   assert.equal(await page.locator('#highlight-ring').isVisible(), true)
 
-  // Regression: scrolling a nested sandbox pane must reposition a live Show Me
-  // ring. Scroll events do not bubble, so this specifically exercises capture.
+  // Nested scrolling must reposition a live Show Me ring. Scroll events do not
+  // bubble, so this specifically exercises the capture path.
   const sidebar = page.locator('#settings-sidebar')
   await page.evaluate(() => {
     const target = document.querySelector('[data-retza-id="nav-bluetooth"]')
@@ -121,8 +128,7 @@ try {
   assert.ok(Math.abs(after.positionedTop - after.expectedTop) < 1, 'Show Me ring must track nested pane scrolling')
   assert.notEqual(after.positionedTop, before.positionedTop, 'Nested scrolling must recompute the Show Me ring position')
 
-  // Regression: a stale request must not clear or overwrite a newer request's
-  // controller/state when two free-form submissions overlap.
+  // A stale request must not overwrite a newer request when submissions overlap.
   await page.unroute('**/api/chat')
   let requestCount = 0
   await page.route('**/api/chat', async route => {
@@ -149,6 +155,56 @@ try {
   assert.equal(await page.getByText(/AI request timed out/i).count(), 0)
   assert.equal(await page.getByRole('button', { name: 'Send' }).isDisabled(), false)
   assert.equal(requestCount, 2)
+
+  // Accessibility text-size controls must change the actual document scale.
+  await page.getByText('Accessibility settings', { exact: true }).click()
+  await page.getByLabel('Extra large').check()
+  const textScale = await page.evaluate(() => ({
+    className: document.body.className,
+    fontSize: Number.parseFloat(getComputedStyle(document.body).fontSize),
+  }))
+  assert.match(textScale.className, /text-xlarge/)
+  assert.ok(textScale.fontSize >= 20)
+
+  // Responsive rules must stack the major panes and header at a narrow width.
+  await page.setViewportSize({ width: 640, height: 900 })
+  const responsiveState = await page.evaluate(() => {
+    const header = document.querySelector('.site-header')
+    const assistant = document.querySelector('.assistant-pane')?.getBoundingClientRect()
+    const computer = document.querySelector('.computer-pane')?.getBoundingClientRect()
+    return {
+      headerDirection: header ? getComputedStyle(header).flexDirection : '',
+      assistantTop: assistant?.top ?? 0,
+      computerTop: computer?.top ?? 0,
+    }
+  })
+  assert.equal(responsiveState.headerDirection, 'column')
+  assert.ok(responsiveState.computerTop > responsiveState.assistantTop)
+
+  // Reduced-motion preference must suppress normal transition timing.
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  const reducedMotion = await page.evaluate(() => ({
+    matches: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    ringTransition: getComputedStyle(document.querySelector('#highlight-ring')).transitionDuration,
+  }))
+  assert.equal(reducedMotion.matches, true)
+  assert.ok(durationSeconds(reducedMotion.ringTransition) <= 0.001)
+
+  // Provider failure must remain a bounded user-facing state, while deterministic
+  // walkthroughs stay available.
+  await page.unroute('**/api/chat')
+  await page.route('**/api/chat', async route => {
+    await route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: JSON.stringify({ code: 'ai_unavailable' }),
+    })
+  })
+  await page.locator('#assistant-input').fill('Explain a broad computer topic.')
+  await page.keyboard.press('Enter')
+  await page.getByText('Broader AI questions are temporarily unavailable. Try one of the supported walkthroughs above.', { exact: true }).waitFor()
+  assert.equal(await page.getByRole('button', { name: 'Send' }).isDisabled(), false)
+  assert.ok(await page.locator('.example-button').count() > 0)
 
   assert.deepEqual(consoleErrors, [], `Browser console/page errors: ${consoleErrors.join(' | ')}`)
   await context.close()

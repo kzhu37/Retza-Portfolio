@@ -27,6 +27,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:uia-live": "node scripts/run-live-uia-test.mjs",
     "verify": "npm run typecheck && npm test && npm run build"
   },
   "dependencies": {
