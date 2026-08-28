@@ -191,14 +191,21 @@ try {
   assert.ok(durationSeconds(reducedMotion.ringTransition) <= 0.001)
 
   // Provider failure must remain a bounded user-facing state, while deterministic
-  // walkthroughs stay available.
+  // walkthroughs stay available. Use a synthetic Response so the browser does not
+  // treat the expected 503 as an unrelated console resource error.
   await page.unroute('**/api/chat')
-  await page.route('**/api/chat', async route => {
-    await route.fulfill({
-      status: 503,
-      contentType: 'application/json',
-      body: JSON.stringify({ code: 'ai_unavailable' }),
-    })
+  await page.evaluate(() => {
+    const nativeFetch = window.fetch.bind(window)
+    window.fetch = async (input, init) => {
+      const url = typeof input === 'string' ? input : input?.url || ''
+      if (url.includes('/api/chat')) {
+        return new Response(JSON.stringify({ code: 'ai_unavailable' }), {
+          status: 503,
+          headers: { 'content-type': 'application/json' },
+        })
+      }
+      return nativeFetch(input, init)
+    }
   })
   await page.locator('#assistant-input').fill('Explain a broad computer topic.')
   await page.keyboard.press('Enter')
