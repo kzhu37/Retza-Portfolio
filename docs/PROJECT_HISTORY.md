@@ -96,7 +96,15 @@ Several presentation themes remain central to the current repository:
 
 The public repository does not reconstruct old screenshots or slides and present them as untouched originals. Quantitative usability metrics were not established in the retained material, so none are invented here. Presentation-only pricing, investment, and market projections are also not treated as measured project outcomes.
 
-## 7. Original project contribution boundaries
+## 7. Collaboration shaped the definition of "simple"
+
+A four-person team did not always agree on what counted as simple wording, the right amount of explanation, the best layout, or when an iteration was finished. Those disagreements were useful because they exposed how subjective "simple" could become when the team judged the product only from its own perspective.
+
+Testing helped ground those decisions in observed behavior. Instead of treating one teammate's preferred wording or interface as automatically correct, the team could ask whether a less experienced user understood the next action and could find where to perform it.
+
+That produced another lasting lesson: **user evidence is more useful than internal consensus when the team itself is not the target user.**
+
+## 8. Original project contribution boundaries
 
 Original team:
 
@@ -118,7 +126,7 @@ The surviving project material supports the following attribution:
 
 Because the original project was collaborative, the current repository's Git history is not used as evidence for the original team division.
 
-## 8. Later public repository phase
+## 9. Later public repository phase
 
 Kevin later prepared and extended the public `Retza-Portfolio` repository around the same central usability problem.
 
@@ -145,7 +153,7 @@ These systems belong to the **later repository phase**. They should not be read 
 
 The current repository's Git history documents that later phase. It does not reconstruct the full chronology or authorship of the original four-person project.
 
-## 9. What stayed constant
+## 10. What stayed constant
 
 Across both phases, the strongest idea remained the same:
 
@@ -153,11 +161,11 @@ Across both phases, the strongest idea remained the same:
 
 That principle connects the original user testing to the current fail-closed engineering approach.
 
-## 10. Evidence boundaries
+## 11. Evidence boundaries
 
 A concise record of what the retained project materials do and do not support is in [Original project evidence](ORIGINAL_PROJECT_EVIDENCE.md). That document exists to keep historical claims separate from later repository engineering.
 
-## 11. Related documentation
+## 12. Related documentation
 
 - [Main README](../README.md)
 - [Original project evidence](ORIGINAL_PROJECT_EVIDENCE.md)

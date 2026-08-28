@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  Electron · TypeScript · React · Gemini · Windows UI Automation · Vitest
+  Electron · TypeScript · Windows UI Automation · React · Gemini · Vitest
 </p>
 
 <p align="center">
@@ -33,11 +33,13 @@
 
 Retza began with a simple question: **what if computer help was designed for people who do not already understand computers?**
 
-Direct testing exposed the problem behind the wording. My grandmother could understand an instruction and still scan the screen because she could not find the button or icon it described. That shifted the product from text-focused help toward guided action and eventually led to **Show Me**, a visual-guidance system that verifies real Windows interface elements before highlighting them.
+Direct testing exposed the deeper problem. My grandmother could understand an instruction and still scan the screen because she could not find the button or icon it described. That shifted the project from text-focused help toward guided action and eventually led to **Show Me**, a visual-guidance system that verifies real Windows interface elements before highlighting them.
 
 > **Core engineering principle:** if Retza cannot confidently verify where a control is, it does not point.
 
-Retza began as a four-person project. The current repository is my later showcase and engineering extension of that concept. Original team work and later repository work are separated in [Project history and provenance](docs/PROJECT_HISTORY.md), with the retained evidence summarized in [Original project evidence](docs/ORIGINAL_PROJECT_EVIDENCE.md).
+> **My role:** In the original four-person project, my documented contribution centered on target-user research, realistic task selection, direct testing with my grandmother, feedback interpretation, product positioning, and project communication. The current repository is my later engineering extension of that concept, including the Windows/Electron architecture, defensive Show Me targeting, deterministic navigation, prerequisite repair, bounded AI-response handling, verification, and the sandboxed browser adaptation.
+
+Original team work and later repository work are separated in [Project history and provenance](docs/PROJECT_HISTORY.md), with the retained evidence summarized in [Original project evidence](docs/ORIGINAL_PROJECT_EVIDENCE.md).
 
 <p align="center">
   <a href="#at-a-glance">Overview</a> ·
@@ -62,7 +64,9 @@ Retza began as a four-person project. The current repository is my later showcas
 | **Trust model** | Model output and renderer input are validated before they can affect operating-system guidance |
 | **Verification** | Windows CI runs type checking, 103 Vitest tests across six files, and a production build; browser checks add 10 focused Node tests and Playwright regression coverage |
 | **Original contribution** | Target-user research, realistic task selection, direct testing with my grandmother, feedback synthesis, positioning, and communication |
-| **Later repository phase** | Windows/Electron architecture, defensive Show Me targeting, deterministic navigation, bounded AI-response handling, prerequisite repair, verification, engineering documentation, and a sandboxed browser adaptation |
+| **Later repository phase** | Windows/Electron systems engineering, defensive targeting, navigation, validation, verification, documentation, and browser adaptation |
+
+**Core implementation:** [`target-resolver.ts`](src/main/show-me/target-resolver.ts) · [`windows-uia.ts`](src/main/show-me/windows-uia.ts) · [`geometry.ts`](src/main/show-me/geometry.ts) · [`assistant-response.ts`](src/main/assistant-response.ts) · [`windows-navigation.ts`](src/main/windows-navigation.ts)
 
 ## Show Me: verified visual guidance
 
@@ -87,7 +91,7 @@ Coordinates are intentionally absent from the model-facing contract.
 
 The trusted Electron main process validates the target, queries the live Windows accessibility tree, scores candidate controls, rejects weak or conflicting evidence, converts Windows geometry into Electron coordinates, and revalidates the same target before and during display.
 
-Candidates can be rejected when they are ambiguous, hidden, disabled, occluded, off-screen, too broad, associated with the wrong window, or no longer consistent with the original observation. The matcher uses a default engineering confidence threshold of **0.78** and a **0.10 ambiguity gap**. These values are defensive heuristics, not experimentally calibrated claims about user-facing accuracy.
+Candidates can be rejected when they are ambiguous, hidden, disabled, occluded, off-screen, too broad, associated with the wrong window, or no longer consistent with the original observation. The matcher uses a default engineering confidence threshold of **0.78** and a **0.10 ambiguity gap**. These are defensive heuristics, not experimentally calibrated claims about user-facing accuracy.
 
 The geometry layer handles DPI scaling and multi-monitor layouts, including negative monitor origins, monitors above the primary display, controls spanning displays, and layout changes while guidance is active.
 
@@ -97,7 +101,7 @@ A visual guide can be worse than no guide if it points confidently to the wrong 
 
 That choice makes **false negatives preferable to false confidence** when Retza affects a real desktop.
 
-See **[Engineering notes](docs/ENGINEERING.md)** for implementation detail and claim-to-code traceability.
+See [Engineering notes](docs/ENGINEERING.md) for implementation detail and claim-to-code traceability.
 
 ## Testing changed the product
 
@@ -130,7 +134,7 @@ The original testing was exploratory and qualitative. This repository does not c
 | --- | --- |
 | **React renderer** | Chat, walkthrough progress, settings, speech input, fox companion, and Show Me presentation |
 | **Restricted preload bridge** | Narrow `contextBridge` surface exposing only required IPC operations |
-| **Trusted Electron main process** | API credentials, response validation, context collection, Windows navigation, prerequisites, struggle detection, and Show Me resolution |
+| **Trusted Electron main process** | Credentials, response validation, context collection, Windows navigation, prerequisites, struggle detection, and Show Me resolution |
 | **External systems** | Gemini for broader language guidance and Windows UI Automation for live accessibility evidence |
 
 Both model output and renderer input are treated as untrusted where they can affect operating-system guidance. Gemini responses are parsed into a bounded application contract before reaching the walkthrough system. API credentials stay outside the renderer, saved keys use Electron `safeStorage` when available, and limited system context is sanitized before entering a prompt.
@@ -139,14 +143,12 @@ Proactive support is similarly bounded. Retza does not claim to infer emotion. I
 
 ## Engineering tradeoffs
 
-The most important decisions were not feature choices alone. Each one traded convenience or coverage for a property Retza needed more.
-
 | Problem | Decision | Cost or tradeoff |
 | --- | --- | --- |
 | Stable Windows procedures do not need generative uncertainty | Keep deterministic, version-aware navigation knowledge for supported topics | Curated paths require maintenance when Windows changes |
 | A model should not choose physical screen positions | Resolve semantic targets against live Windows UI Automation evidence | Some targets are refused even when a looser matcher might guess |
 | The OS bridge needs to stay bounded and inspectable | Launch a fixed PowerShell UI Automation worker with structured query data | Cold-start latency can be higher than a warm native helper process |
-| Correct text can still assume missing setup | Detect known prerequisite gaps and prepend deterministic repair steps | Coverage is intentionally limited to prerequisites the application can identify reliably |
+| Correct text can still assume missing setup | Detect known prerequisite gaps and prepend deterministic repair steps | Coverage is limited to prerequisites the application can identify reliably |
 | Proactive help can become intrusive | Use conservative thresholds, cooldowns, and a visible Watching control | Retza deliberately misses some possible moments of struggle |
 | A browser cannot reproduce desktop privileges | Demonstrate the interaction model honestly inside a sandbox | The browser adaptation cannot inspect other applications or prove Windows UIA behavior |
 
@@ -160,7 +162,7 @@ The Windows CI suite runs **103 Vitest tests across six test files** plus TypeSc
 
 The browser adaptation adds **10 focused Node tests** for semantic target resolution and deterministic scenario routing. Playwright regression checks exercise Show Me success and failure states, revalidation, accessibility settings, responsive layout, reduced motion, secret exposure, and console or network failures.
 
-The repository also runs a writing check that blocks forbidden long-dash characters from public-facing Markdown, HTML, text, and SVG files.
+The repository also runs a writing audit that rejects long-dash Unicode characters from portfolio prose and interface source.
 
 Representative paths:
 
@@ -172,7 +174,7 @@ Representative paths:
 - [`tests/windows-navigation.test.ts`](tests/windows-navigation.test.ts)
 - [`browser-demo/tests/target-resolver.node-test.js`](browser-demo/tests/target-resolver.node-test.js)
 
-For a full implementation-to-test map, see **[Engineering notes](docs/ENGINEERING.md)**.
+For a full implementation-to-test map, see [Engineering notes](docs/ENGINEERING.md).
 
 ## Project phases
 
@@ -192,21 +194,19 @@ Retza has two distinct development phases. The original team project established
 | General AI guidance | Hybrid deterministic Windows knowledge plus Gemini |
 | Approximate visual-guidance concept | Ambiguity rejection, stale-target revalidation, DPI conversion, and multi-monitor handling |
 
-For the supporting chronology, evidence boundaries, and original-team attribution, see **[Original project evidence](docs/ORIGINAL_PROJECT_EVIDENCE.md)** and **[Project history and provenance](docs/PROJECT_HISTORY.md)**.
+For the supporting chronology, evidence boundaries, and original-team attribution, see [Original project evidence](docs/ORIGINAL_PROJECT_EVIDENCE.md) and [Project history and provenance](docs/PROJECT_HISTORY.md).
 
 ## Browser adaptation and scope
 
-The [`browser-demo`](browser-demo/) folder demonstrates Retza's interaction model inside a sandboxed browser environment. It is **not** equivalent to the Windows application.
+The [`browser-demo`](browser-demo/) folder demonstrates Retza's interaction model inside a sandboxed browser environment. It is not equivalent to the Windows application.
 
-Inside the simulated computer, Show Me resolves accessible DOM names, roles, semantic IDs, visibility, disabled state, and live bounds. Missing, ambiguous, hidden, or disabled targets are rejected rather than guessed. The root [`api/`](api/) folder provides the optional server-side provider boundary used by a hosted browser build, keeping provider credentials out of client-side code.
-
-The browser cannot inspect other applications, access Windows UI Automation, monitor system-wide interaction, or display guidance over the real desktop. Those capabilities remain specific to the Windows/Electron implementation.
+Inside the simulated computer, Show Me resolves accessible DOM names, roles, semantic IDs, visibility, disabled state, and live bounds. Missing, ambiguous, hidden, or disabled targets are rejected rather than guessed. The browser cannot inspect other applications, access Windows UI Automation, monitor system-wide interaction, or display guidance over the real desktop. Those capabilities remain specific to the Windows/Electron implementation.
 
 The desktop interface includes adjustable text size, keyboard-operable controls, focus management, ARIA labels and live regions, speech input when Chromium supports it, reduced-motion behavior, focused walkthrough steps, and a visible control to pause proactive monitoring.
 
-Retza is currently **Windows-first**. Exact Show Me locating uses Windows UI Automation. macOS and Linux packaging targets exist, but feature parity is incomplete. Speech recognition currently uses English (`en-US`) when available, the proactive detector uses heuristics rather than emotion recognition, and the project has not undergone formal WCAG certification.
+Retza is currently **Windows-first**. Exact Show Me locating uses Windows UI Automation. macOS and Linux packaging targets exist, but feature parity is incomplete. Speech recognition currently uses English (`en-US`) when available, proactive detection uses heuristics rather than emotion recognition, and the project has not undergone formal WCAG certification.
 
-See **[Browser adaptation documentation](browser-demo/README.md)** for supported scenarios, local use, and verification.
+See [Browser adaptation documentation](browser-demo/README.md) for supported scenarios and local use.
 
 ## Run locally
 
@@ -263,4 +263,4 @@ My documented original contribution focused on **target-user research, realistic
 
 The current repository is my later showcase and engineering extension of the original concept. It adds the present Windows/Electron architecture, defensive Show Me targeting, deterministic navigation, bounded AI-response handling, prerequisite repair, testing and verification, engineering documentation, and the sandboxed browser adaptation. Its Git history documents this later phase, not the full chronology of the original team project.
 
-For the evidence trail and fuller phase-by-phase distinction, see **[Project history and provenance](docs/PROJECT_HISTORY.md)**.
+For the evidence trail and fuller phase-by-phase distinction, see [Project history and provenance](docs/PROJECT_HISTORY.md).

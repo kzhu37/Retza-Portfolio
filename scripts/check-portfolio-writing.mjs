@@ -2,7 +2,16 @@ import { readFile, readdir } from 'node:fs/promises'
 import { extname, join, relative } from 'node:path'
 
 const ROOT = process.cwd()
-const INCLUDED_EXTENSIONS = new Set(['.md', '.html', '.txt', '.svg'])
+const INCLUDED_EXTENSIONS = new Set([
+  '.md',
+  '.html',
+  '.txt',
+  '.svg',
+  '.js',
+  '.jsx',
+  '.ts',
+  '.tsx',
+])
 const EXCLUDED_DIRS = new Set(['.git', 'node_modules', 'dist', 'out'])
 const FORBIDDEN = new Map([
   ['\u2010', 'U+2010 HYPHEN'],
