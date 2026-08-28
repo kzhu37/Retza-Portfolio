@@ -1,29 +1,20 @@
 # Retza browser adaptation
 
-This folder is a sandboxed browser adaptation of Retza's interaction model. It exists so the walkthrough and Show Me ideas can be inspected without pretending that a normal web page has the privileges of the Windows desktop application.
+This folder is a sandboxed browser adaptation of Retza's interaction model. It lets reviewers inspect the walkthrough and Show Me ideas without pretending that a normal web page has the privileges of the Windows desktop application.
 
 The Windows/Electron application remains the authoritative implementation for operating-system guidance.
 
-## What this demo demonstrates
+## What the adaptation demonstrates
 
-The browser adaptation keeps the same basic trust principle as the desktop version:
+The browser version keeps the same core trust principle:
 
-**describe the target semantically, resolve it against live interface evidence, and refuse to highlight when the evidence is weak.**
+**Describe the target semantically, resolve it against live interface evidence, and refuse to highlight when the evidence is weak.**
 
-Inside the simulated computer, the resolver can use:
+Inside the simulated computer, the resolver uses accessible names, roles, semantic IDs, current visibility, disabled state, and live element bounds. Missing, ambiguous, hidden, disabled, or unsupported targets are rejected rather than guessed.
 
-- accessible names;
-- ARIA and DOM roles;
-- semantic IDs;
-- current visibility;
-- disabled state; and
-- live element bounds.
+Deterministic walkthrough scenarios cover representative tasks including Bluetooth, Wi-Fi, display settings, sound output, Windows Update, Windows Search, and app removal. The interface also includes large-text options, keyboard operation, visible focus, reduced-motion behavior, optional speech input when supported, and a bounded sandbox-only proactive-help demonstration.
 
-Targets that are missing, hidden, disabled, ambiguous, or unsupported are rejected rather than guessed.
-
-The demo includes deterministic walkthrough scenarios for representative tasks such as Bluetooth, Wi-Fi, display settings, sound output, Windows Update, Windows Search, and app removal. The browser UI also preserves large-text options, keyboard operation, visible focus, ARIA labels and live regions, reduced-motion behavior, and optional speech input when the browser supports it.
-
-## What this demo does not do
+## Scope boundary
 
 A browser tab cannot reproduce Retza's desktop privileges. This adaptation does not:
 
@@ -33,13 +24,30 @@ A browser tab cannot reproduce Retza's desktop privileges. This adaptation does 
 - draw guidance over the real desktop; or
 - replace the Windows Show Me resolver.
 
-Those boundaries are deliberate. The browser version demonstrates the interaction model and failure behavior without overstating what a web page can access.
+Those limitations are deliberate. The browser build demonstrates interaction behavior and fail-closed semantic targeting only within page-owned content.
 
 ## Server-side provider boundary
 
 The repository root [`../api/`](../api/) folder contains the optional server-side provider boundary used by a hosted browser build.
 
-`api/chat.js` validates and bounds browser requests, keeps provider credentials outside client-side code, constrains model output to the demo's contract, and refuses to claim access to the user's real operating system. The browser adaptation still works through deterministic scenarios when broader provider-backed guidance is unavailable.
+`api/chat.js` validates and bounds browser requests, keeps provider credentials outside client-side code, constrains model output to the demo contract, and refuses to claim access to the user's real operating system. Deterministic scenarios continue to work when broader provider-backed guidance is unavailable.
+
+## Verification
+
+The browser adaptation has two distinct verification layers:
+
+| Layer | Coverage |
+| --- | --- |
+| **Node tests** | Deterministic scenario routing plus exact, missing, ambiguous, hidden, disabled, and unsupported semantic targets |
+| **Playwright regressions** | Validated walkthrough rendering, successful Show Me positioning, highlight repositioning during nested scrolling, overlapping-request race handling, text-size settings, responsive layout, reduced-motion behavior, provider-unavailable handling, and console or page errors |
+
+Run the focused Node tests and rebuild the adaptation:
+
+```bash
+npm run verify
+```
+
+The repository's main GitHub Actions workflow also builds the browser adaptation and runs the Playwright regression script.
 
 ## Structure
 
@@ -51,7 +59,7 @@ The repository root [`../api/`](../api/) folder contains the optional server-sid
 | [`lib/target-resolver.js`](lib/target-resolver.js) | Semantic DOM target resolution with fail-closed behavior |
 | [`tests/target-resolver.node-test.js`](tests/target-resolver.node-test.js) | Resolver success and rejection cases |
 | [`tests/scenarios.node-test.js`](tests/scenarios.node-test.js) | Deterministic scenario coverage |
-| [`tests/local-browser.mjs`](tests/local-browser.mjs) | Playwright regression coverage for the built demo |
+| [`tests/local-browser.mjs`](tests/local-browser.mjs) | Playwright regression coverage for the built adaptation |
 
 ## Run locally
 
@@ -61,19 +69,7 @@ Build the static adaptation:
 npm run build
 ```
 
-The output is written to `dist/`.
-
-Serve the generated directory with any local static server. The repository intentionally does not require a framework-specific development server for this adaptation.
-
-## Verify
-
-Run the focused Node tests and rebuild the demo:
-
-```bash
-npm run verify
-```
-
-The repository's main GitHub Actions workflow also builds the browser adaptation and runs the Playwright regression suite.
+The output is written to `dist/`. Serve that directory with any local static server.
 
 ## Relationship to the desktop application
 
