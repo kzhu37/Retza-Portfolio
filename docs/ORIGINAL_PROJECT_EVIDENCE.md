@@ -103,9 +103,9 @@ The retained material supports the following original-phase contribution for Kev
 
 Vladimir Dukkardt led much of the original interface and visual direction. Retained material also indicates that other teammates led much of the original AI logic. The surviving narration does not support assigning every original subsystem to one person with certainty, so the repository avoids doing so.
 
-## What this evidence demonstrates
+## Observation-to-change chain
 
-The strongest original Retza contribution is not a feature count. It is an iteration chain:
+The clearest original iteration chain was:
 
 **assumption -> observation -> product change**
 
