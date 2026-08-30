@@ -135,7 +135,7 @@ Retza also does not claim to infer emotion. Proactive help uses bounded interact
 | The OS bridge should stay bounded and inspectable | Launch fixed PowerShell UI Automation source with structured query data | Cold-start latency is higher than a warm helper |
 | Correct text can still assume missing setup | Detect known prerequisite gaps and prepend repair steps | Coverage is limited to known prerequisites |
 | Proactive help can become intrusive | Use conservative thresholds, cooldowns, and a visible Watching control | Some possible moments of struggle are missed |
-| A browser cannot reproduce desktop privileges | Demonstrate the interaction model inside a sandbox | Browser proof cannot substitute for Windows UI Automation |
+| A browser cannot reproduce desktop privileges | Recreate the interaction model inside a sandbox | The browser adaptation cannot substitute for Windows UI Automation |
 
 The PowerShell transport passes target text as structured data instead of interpolating it into executable source, with bounded window, node, candidate, and time limits.
 
@@ -148,10 +148,8 @@ Verification is split by trust boundary so each claim maps to the evidence that 
 | **Desktop Vitest** | 103 tests across six files covering response validation, Windows navigation, UIA candidate ranking, ambiguity and visibility rejection, stale state, DPI and multi-monitor geometry, duplicated taskbar controls, lifecycle behavior, and settings validation |
 | **Browser Node** | 10 tests covering deterministic routing plus exact, missing, ambiguous, hidden, disabled, and unsupported semantic targets |
 | **Playwright** | Validated walkthrough rendering, Show Me positioning and nested-scroll repositioning, overlapping-request race handling, text-size settings, responsive layout, reduced motion, provider-unavailable handling, and console or page errors |
-| **Build and static checks** | TypeScript checking, Electron build, browser build, API syntax checks, and the portfolio-writing audit |
+| **Build and static checks** | TypeScript checking, Electron build, browser build, API syntax checks, and documentation/content checks |
 | **Live Windows UIA** | Opt-in local smoke test of the real transport against the Windows taskbar, separate from default CI because hosted runners do not reproduce a normal interactive desktop session |
-
-The writing audit rejects long-dash Unicode characters from Markdown, HTML, SVG, JavaScript, TypeScript, and related portfolio source.
 
 **Verification paths:** [`windows-uia.test.ts`](src/main/show-me/windows-uia.test.ts) · [`geometry.test.ts`](src/main/show-me/geometry.test.ts) · [`assistant-response.test.ts`](tests/assistant-response.test.ts) · [`windows-navigation.test.ts`](tests/windows-navigation.test.ts) · [`local-browser.mjs`](browser-demo/tests/local-browser.mjs)
 
@@ -159,7 +157,7 @@ See [Engineering notes](docs/ENGINEERING.md) for claim-to-code traceability and 
 
 ## Browser adaptation and scope
 
-The [`browser-demo`](browser-demo/) folder demonstrates the interaction model inside a sandbox. It can resolve semantic DOM targets and live bounds in the simulated computer, but it cannot inspect other applications, access Windows UI Automation, monitor system-wide interaction, or guide the real desktop.
+The [`browser-demo`](browser-demo/) folder recreates the interaction model inside a sandbox. It can resolve semantic DOM targets and live bounds in the simulated computer, but it cannot inspect other applications, access Windows UI Automation, monitor system-wide interaction, or guide the real desktop.
 
 Retza is **Windows-first**. Exact Show Me locating uses Windows UI Automation. macOS and Linux packaging targets exist without feature parity. Speech recognition uses English (`en-US`) when available, proactive support uses heuristics rather than emotion recognition, and the project has not undergone formal accessibility certification.
 
