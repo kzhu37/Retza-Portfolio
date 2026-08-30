@@ -1,10 +1,10 @@
 # Retza browser adaptation
 
-This folder is a sandboxed browser adaptation of Retza's interaction model. It lets reviewers inspect the walkthrough and Show Me ideas without pretending that a normal web page has the privileges of the Windows desktop application.
+This folder is a sandboxed browser adaptation of Retza's interaction model. It makes the walkthrough and Show Me behavior directly inspectable without pretending that a normal web page has the privileges of the Windows desktop application.
 
 The Windows/Electron application remains the authoritative implementation for operating-system guidance.
 
-## What the adaptation demonstrates
+## What the adaptation preserves
 
 The browser version keeps the same core trust principle:
 
@@ -24,7 +24,7 @@ A browser tab cannot reproduce Retza's desktop privileges. This adaptation does 
 - draw guidance over the real desktop; or
 - replace the Windows Show Me resolver.
 
-Those limitations are deliberate. The browser build demonstrates interaction behavior and fail-closed semantic targeting only within page-owned content.
+Those limitations are deliberate. The browser build preserves interaction behavior and fail-closed semantic targeting only within page-owned content.
 
 ## Server-side provider boundary
 
