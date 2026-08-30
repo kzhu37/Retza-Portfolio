@@ -233,11 +233,11 @@ The current desktop suite contains 103 Vitest tests across six files.
 
 The browser adaptation adds focused Node tests for semantic target resolution and deterministic scenario routing plus Playwright regression coverage for the built browser experience.
 
-The CI definition is visible in [`.github/workflows/verify.yml`](../.github/workflows/verify.yml). It runs the public-writing check, TypeScript checking, desktop tests, desktop production build, browser API syntax checks, browser unit tests, browser build, and local Playwright regressions. These checks intentionally verify repository-controlled behavior rather than relying on an external deployment alias.
+The CI definition is visible in [`.github/workflows/verify.yml`](../.github/workflows/verify.yml). It runs documentation/content checks, TypeScript checking, desktop tests, desktop production build, browser API syntax checks, browser unit tests, browser build, and local Playwright regressions. These checks intentionally verify repository-controlled behavior rather than relying on an external deployment alias.
 
 ## 15. Claim-to-code traceability
 
-The architecture is easiest to evaluate when each major claim can be traced directly to implementation and verification.
+Each major engineering claim is linked directly to its implementation and verification path.
 
 | Engineering claim | Implementation | Verification |
 | --- | --- | --- |
