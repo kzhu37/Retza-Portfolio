@@ -25,7 +25,7 @@ jobs:
       - name: Install desktop dependencies
         run: npm ci
 
-      - name: Check portfolio writing
+      - name: Check public documentation
         run: node scripts/check-portfolio-writing.mjs
 
       - name: Type check desktop application
