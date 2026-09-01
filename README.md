@@ -17,7 +17,7 @@
   &nbsp;·&nbsp;
   <a href="docs/ENGINEERING.md"><strong>Engineering Notes</strong></a>
   &nbsp;·&nbsp;
-  <a href="browser-demo/"><strong>Browser Adaptation</strong></a>
+  <a href="https://retza-demo.vercel.app/"><strong>Browser Adaptation</strong></a>
   &nbsp;·&nbsp;
   <a href="docs/PROJECT_HISTORY.md"><strong>Project History</strong></a>
 </p>
